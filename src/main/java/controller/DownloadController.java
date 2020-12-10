@@ -19,7 +19,7 @@ public class DownloadController {
     @Resource
     private RuleService ruleServiceImpl;
 
-    private Logger logger = Logger.getLogger(DownloadController.class);
+    private final Logger logger = Logger.getLogger(DownloadController.class);
 
     @RequestMapping("download")
     public String download(HttpServletRequest req, HttpServletResponse resp) {

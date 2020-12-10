@@ -21,7 +21,7 @@ public class DeleteController {
     @Resource
     private RuleService ruleServiceImpl;
 
-    private Logger logger = Logger.getLogger(DeleteController.class);
+    private final Logger logger = Logger.getLogger(DeleteController.class);
 
     @RequestMapping("delete")
     public String delete(HttpServletRequest req) {

@@ -110,6 +110,13 @@ function clickModeDownload() {
     });
 }
 
+function clickModeAppoint() {
+    $('#myModal0').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+}
+
 function clickModeTrans() {
     $('#myModal2').modal({
         backdrop: 'static',

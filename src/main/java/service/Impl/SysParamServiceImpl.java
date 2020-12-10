@@ -24,11 +24,17 @@ public class SysParamServiceImpl implements SysParamService {
     public static Field G;//群G
     public static Field Gt;//群Gt
     public static Element P;//群G的生成元
-    public static Element P_pub;
-    public static Element s;//私钥对
+    public static Element pkH;
+    public static Element skH;
+    public static Element pkP;
+    public static Element skP;
     public static Element k;//私钥对
 
     public static Pairing pairing;
+
+    public static String[] idKS = new String[]{"ks1", "ks2", "ks3", "ks4", "ks5"};
+    public static String idCS = "cs";
+    public static String idH = "h";
 
     /**
      * 如果数据库中有系统参数，取出后直接赋值给本类，否则才需要初始化参数，后写入数据库（同缓存）
@@ -52,13 +58,13 @@ public class SysParamServiceImpl implements SysParamService {
             G = pairing.getG1();
             Gt = pairing.getGT();
             P = pairing.getG1().newRandomElement().getImmutable();
-            s = pairing.getZr().newRandomElement().getImmutable();
-            k = pairing.getZr().newElement().setFromHash(s.toBytes(), 0, s.toBytes().length);
-            P_pub = P.duplicate().mulZn(s.duplicate()).getImmutable();
+            skH = pairing.getZr().newRandomElement().getImmutable();
+            k = pairing.getZr().newElement().setFromHash(skH.toBytes(), 0, skH.toBytes().length);
+            pkH = P.duplicate().mulZn(skH.duplicate()).getImmutable();
             //Element转String
             byte[] byteP = P.toBytes();
-            byte[] byteP_pub = P_pub.toBytes();
-            byte[] bytes = s.toBytes();
+            byte[] byteP_pub = pkH.toBytes();
+            byte[] bytes = skH.toBytes();
             byte[] bytesk = k.toBytes();
 
             try {
@@ -77,12 +83,14 @@ public class SysParamServiceImpl implements SysParamService {
             try {
                 P = pairing.getG1().newElementFromBytes(strP.getBytes("ISO8859-1"));
                 k = pairing.getZr().newElementFromBytes(strK.getBytes("ISO8859-1"));
-                P_pub = pairing.getG1().newElementFromBytes(strP_pub.getBytes("ISO8859-1"));
-                s = pairing.getZr().newElementFromBytes(strS.getBytes("ISO8859-1"));
+                pkH = pairing.getG1().newElementFromBytes(strP_pub.getBytes("ISO8859-1"));
+                skH = pairing.getZr().newElementFromBytes(strS.getBytes("ISO8859-1"));
+                skP = pairing.getZr().newRandomElement().getImmutable();
+                pkP = P.duplicate().mulZn(skP.duplicate().getImmutable());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-        logger.info("AS的公钥为：" + P_pub.toString().substring(0, 15));
+        logger.info("AS的公钥为：" + pkH.toString().substring(0, 15));
     }
 }

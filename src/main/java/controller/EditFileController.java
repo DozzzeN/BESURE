@@ -21,7 +21,7 @@ public class EditFileController {
     @Resource
     private RuleService ruleServiceImpl;
 
-    private Logger logger = Logger.getLogger(EditFileController.class);
+    private final Logger logger = Logger.getLogger(EditFileController.class);
 
     @RequestMapping("edit")
     public String editFile(HttpServletRequest req) {
@@ -54,7 +54,6 @@ public class EditFileController {
                 return "redirect:/index";
             }
         }
-
 
         if (file.getFileStage() > 1) {
             session.setAttribute("file", file);

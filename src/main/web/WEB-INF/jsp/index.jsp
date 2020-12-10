@@ -88,7 +88,10 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li>
-                            <a href="#"><fmt:message key="mine"/></a>
+                            <a id="appointBtn"><fmt:message key="appoint"/></a>
+                        <li>
+                        <li>
+                            <a id="consultBtn"><fmt:message key="consult"/></a>
                         <li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -697,7 +700,41 @@
                 }
             }
         });
-    });
+
+        //委派
+        $("#appointBtn").click(function () {
+            $.ajax({
+                url: "appoint",
+                type: "post",
+                success: function (code) {
+                    //不要写成code === 1
+                    if (code == 1) {
+                        alert("<fmt:message key="appointSucceeded"/>");
+                        location.href = "index";
+                    } else {
+                        alert("<fmt:message key="appointFailed"/>");
+                    }
+                },
+            })
+        });
+
+        //就诊
+        $("#consultBtn").click(function () {
+            $.ajax({
+                url: "consult",
+                type: "post",
+                success: function (code) {
+                    //不要写成code === 1
+                    if (code == 1) {
+                        alert("<fmt:message key="consultSucceeded"/>");
+                        location.href = "index";
+                    } else {
+                        alert("<fmt:message key="consultFailed"/>");
+                    }
+                },
+            })
+        });
+    })
 </script>
 <script type="text/javascript" src="../ESP4/resources/js/headroom.js"></script>
 <script type="text/javascript" src="../ESP4/resources/js/jQuery.headroom.js"></script>

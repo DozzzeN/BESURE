@@ -23,10 +23,8 @@ import java.util.Map;
 public class AuthenticationServerController {
     @Resource
     private AuthenticationServerService authenticationServerServiceImpl;
-
     @Resource
     private SysParamService sysParamServiceImpl;
-
     @Resource
     private OwnerService ownerServiceImpl;
 
@@ -49,8 +47,8 @@ public class AuthenticationServerController {
         if (uid > 0) {
             logger.warn("AS验证用户ID：" + uid + "和pwd：" + password + "通过");
             logger.error("用户" + user.getUname() + "登录成功");
-            //初始化参数
-            sysParamServiceImpl.init();
+//            //初始化参数
+//            sysParamServiceImpl.init();
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
             //密钥协商

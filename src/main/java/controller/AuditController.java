@@ -229,7 +229,7 @@ public class AuditController {
 
         Element sig_mul_P = SysParamServiceImpl.pairing.pairing(signature, SysParamServiceImpl.P.getImmutable()).getImmutable();
 
-        Element thetaState_mul_P_pub = SysParamServiceImpl.pairing.pairing(Theta_state, SysParamServiceImpl.P_pub).getImmutable();
+        Element thetaState_mul_P_pub = SysParamServiceImpl.pairing.pairing(Theta_state, SysParamServiceImpl.pkH).getImmutable();
         logger.info("验证等式左边：" + sig_mul_P.toString());
         logger.info("验证等式右边：" + thetaState_mul_P_pub.toString());
         return sig_mul_P.isEqual(thetaState_mul_P_pub);

@@ -19,7 +19,7 @@ public class UploadFileController {
     private FileService fileServiceImpl;
     @Resource
     private RuleService ruleServiceImpl;
-    private Logger logger = Logger.getLogger(UploadFileController.class);
+    private final Logger logger = Logger.getLogger(UploadFileController.class);
 
     @RequestMapping("upload")
     public String uploadFile(HttpServletRequest req) {

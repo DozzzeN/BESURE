@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class ServerController {
     @Resource
     private ServerService serverServiceImpl;
-    private Logger logger = Logger.getLogger(ServerController.class);
+    private final Logger logger = Logger.getLogger(ServerController.class);
 
     @ResponseBody
     @RequestMapping("server")

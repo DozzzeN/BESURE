@@ -23,13 +23,13 @@ public class DeployContractAndClearDataInView implements Filter {
     @Override
     public void init(FilterConfig filterconfig) {
         logger.warn("开始部署合约");
-        String address = DeployUtil.deploy();
-        if (address != null && !address.equals("")) {
-            ServletContext sc = filterconfig.getServletContext();
-            sc.setAttribute("contract", address);
-        } else {
-            logger.error("合约部署失败");
-        }
+//        String address = DeployUtil.deploy();
+//        if (address != null && !address.equals("")) {
+//            ServletContext sc = filterconfig.getServletContext();
+//            sc.setAttribute("contract", address);
+//        } else {
+//            logger.error("合约部署失败");
+//        }
     }
 
     /**

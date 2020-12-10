@@ -30,7 +30,7 @@ public class RetrieveController {
     private RuleMapper ruleMapper;
     @Resource
     private UserMapper userMapper;
-    private Logger logger = Logger.getLogger(RetrieveController.class);
+    private final Logger logger = Logger.getLogger(RetrieveController.class);
 
     @RequestMapping("retrieve")
     @ResponseBody

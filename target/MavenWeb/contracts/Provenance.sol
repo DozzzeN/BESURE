@@ -12,7 +12,7 @@ contract Provenance {
         address operator; // 操作者
         Role role; // 操作者身份
         uint256 operateTime; // 操作时间
-        Operation opeate; // 操作类型
+        Operation operate; // 操作类型
         string data; // 交易的数据字段
     }
 
@@ -63,49 +63,6 @@ contract Provenance {
         _stageNumber = 1;
         // 通知客户端
         emit eventCreate(1, 1, msg.sender, _fileName, _fileType, _fileSize, _data);
-    }
-
-    function Edit(
-        uint256 _lastFileNumber,
-        uint256 _lastStageNumber,
-        Role _role,
-        Operation _opeate,
-        string memory _fileName,
-        string memory _fileType,
-        uint256 _fileSize,
-        string memory _data
-    ) public {
-        require(
-            _lastFileNumber > 0 && _lastStageNumber > 0,
-            "File must have been created."
-        );
-
-        //        require(
-        //            files[_lastFileNumber][_lastStageNumber].fileID != 0 && files[_lastFileNumber][_lastStageNumber + 1].fileID == 0,
-        //            "Incorrect file stage number."
-        //        );
-
-        // 文件_lastFileNumber的第_lastStageNumber+1阶段属性
-        files[_lastFileNumber][_lastStageNumber + 1].fileID = _lastFileNumber;
-        files[_lastFileNumber][_lastStageNumber + 1].fileName = _fileName;
-        files[_lastFileNumber][_lastStageNumber + 1].fileType = _fileType;
-        files[_lastFileNumber][_lastStageNumber + 1].fileSize = _fileSize;
-        files[_lastFileNumber][_lastStageNumber + 1].stageNumber = _lastStageNumber + 1;
-        files[_lastFileNumber][_lastStageNumber + 1].stageCount = files[_lastFileNumber][_lastStageNumber].stageCount + 1;
-        FileOperation memory _fileOperation = FileOperation({
-            operator : msg.sender,
-            role : _role,
-            operateTime : now,
-            opeate : _opeate,
-            data : _data
-            });
-        stages[_lastFileNumber][_lastStageNumber + 1] = _fileOperation;
-
-        //        _fileNumber = _lastFileNumber;
-        //        _stageNumber = _lastStageNumber + 1;
-
-        // 通知客户端
-        emit eventEdit(_lastFileNumber, _lastStageNumber + 1, msg.sender, _role, _opeate, _fileName, _fileType, _fileSize, _data);
     }
 
     function getData(

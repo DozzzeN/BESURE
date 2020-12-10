@@ -38,7 +38,7 @@ public class EditServiceImpl implements EditorService {
         byte[] M1_ID = ArraysUtil.mergeByte(M1.getBytes(), ID.getBytes());
         state = pairing.getZr().newElement().setFromHash(M1_ID, 0, M1_ID.length);
         logger.info("加密前的状态信息State：" + Arrays.toString(state.toBytes()));
-        byte[] encryptedState = CryptoUtil.aes_encrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), state.toBytes());
+        byte[] encryptedState = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), state.toBytes());
         logger.info("加密后的状态信息State：" + Arrays.toString(encryptedState));
         logger.warn("第一阶段：用户将加密后的状态信息发送给AS");
         return encryptedState;
@@ -49,7 +49,7 @@ public class EditServiceImpl implements EditorService {
     public byte[] sendLastBlockHash(int fid, User user) {
         Server server = provenanceMapper.selBlockHashPro(fid);
         logger.warn("第一阶段：用户将上一阶段的区块哈希发送给AS");
-        return CryptoUtil.aes_encrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), server.getBlockHash().getBytes());
+        return CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), server.getBlockHash().getBytes());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EditServiceImpl implements EditorService {
         int signatureLength = server.getSignatureLength();
         byte[] lastSignature = ArraysUtil.splitByte(Provenance.getBytes(), Provenance.getBytes().length - signatureLength, signatureLength)[1];
         logger.warn("第一阶段：用户将上一阶段的签名发送给AS");
-        return CryptoUtil.aes_encrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), lastSignature);
+        return CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), lastSignature);
 
     }
 
@@ -71,7 +71,7 @@ public class EditServiceImpl implements EditorService {
         //检验式的左边值
         Element sig_mul_P = pairing.pairing(signature, SysParamServiceImpl.P);
         //检验式的右边值
-        Element ThetaSt_mul_P_pub = pairing.pairing(Theta_st, SysParamServiceImpl.P_pub);
+        Element ThetaSt_mul_P_pub = pairing.pairing(Theta_st, SysParamServiceImpl.pkH);
         //验证不成功则返回空
         return sig_mul_P.isEqual(ThetaSt_mul_P_pub);
     }

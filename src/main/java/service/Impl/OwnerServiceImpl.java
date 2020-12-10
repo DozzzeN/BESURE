@@ -22,7 +22,7 @@ public class OwnerServiceImpl implements OwnerService {
     private Element aP;
     private Integer uid;
     private Element state;
-    private Logger logger = Logger.getLogger(OwnerServiceImpl.class);
+    private final Logger logger = Logger.getLogger(OwnerServiceImpl.class);
 
     /**
      * 返回C_1, C_2, ID_length, PWD_length, aP_length, time_length
@@ -37,7 +37,7 @@ public class OwnerServiceImpl implements OwnerService {
         long currentTime = System.currentTimeMillis();
 
         Element C_1 = P.duplicate().mulZn(r_1).getImmutable();
-        Element k = P_pub.duplicate().mulZn(r_1).getImmutable();
+        Element k = pkH.duplicate().mulZn(r_1).getImmutable();
         aP = P.duplicate().mulZn(a).getImmutable();
 
         byte[] k_hash = CryptoUtil.getHash("SHA-256", k);//将k哈希，使其长度适应aes算法的密钥长度
@@ -49,7 +49,7 @@ public class OwnerServiceImpl implements OwnerService {
                 Long.toString(currentTime).getBytes());
 
         //计算C_2 = E(k,uid||PWD||aP||ct)
-        byte[] C_2 = CryptoUtil.aes_encrypt(k_hash, data);
+        byte[] C_2 = CryptoUtil.AESEncrypt(k_hash, data);
 
         //将C_1,C_2以及各个部分的长度传给服务器
         Map<String, Object> C1C2Map = new HashMap<>();
@@ -77,7 +77,7 @@ public class OwnerServiceImpl implements OwnerService {
         byte[] M1_ID = ArraysUtil.mergeByte(M1.getBytes(), ID.getBytes());
         state = pairing.getZr().newElement().setFromHash(M1_ID, 0, M1_ID.length);
         logger.info("加密前的状态信息State：" + Arrays.toString(state.toBytes()));
-        byte[] encryptedState = CryptoUtil.aes_encrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), state.toBytes());
+        byte[] encryptedState = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), state.toBytes());
         logger.info("加密后的状态信息State：" + Arrays.toString(encryptedState));
         logger.warn("第一阶段：用户将加密后的状态信息发送给AS");
         return encryptedState;
@@ -100,7 +100,7 @@ public class OwnerServiceImpl implements OwnerService {
         user.setSk_user(sk);
         byte[] sk_hash = CryptoUtil.getHash("SHA-256", sk);
         //利用会话密钥解密C_4,分割明文
-        byte[] decry_C_4 = CryptoUtil.aes_decrypt(sk_hash, C_4);
+        byte[] decry_C_4 = CryptoUtil.AESDecrypt(sk_hash, C_4);
         byte[][] splitByte = ArraysUtil.splitByte(decry_C_4, ID_length, aP_length, bP_length, time_length, PID_length);
         //确认ID||aP||bP||ct的合法性
         byte[] bP = splitByte[2];
@@ -139,7 +139,7 @@ public class OwnerServiceImpl implements OwnerService {
         logger.info("用户计算验证等式的左边：" + signature_mul_P.toString());
         byte[] state_PID = ArraysUtil.mergeByte(state.toBytes(), PID);
         Element state_PID_hashValue = pairing.getG1().newElement().setFromHash(state_PID, 0, state_PID.length);
-        Element state_PID_hashValue_mul_P_pub = pairing.pairing(state_PID_hashValue, P_pub);
+        Element state_PID_hashValue_mul_P_pub = pairing.pairing(state_PID_hashValue, pkH);
         logger.info("用户计算验证等式的右边：" + state_PID_hashValue_mul_P_pub);
         return signature_mul_P.equals(state_PID_hashValue_mul_P_pub);
     }

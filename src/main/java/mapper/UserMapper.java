@@ -1,5 +1,6 @@
 package mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -25,6 +26,15 @@ public interface UserMapper {
             "set PID = #{PID} " +
             "where uid = #{uid}")
     int updPIDByUid(@Param("PID") String PID, @Param("uid") int uid);
+
+    /**
+     * 新增用户记录，自增的主键无需传入
+     */
+    @Insert("insert t_user (uname,password,role)  " +
+            "values(#{uname},#{password},#{role})")
+    int insUser(@Param("uname") String uname,
+                @Param("password") String password,
+                @Param("role") String role);
 
     /**
      * 根据用户名查找uid

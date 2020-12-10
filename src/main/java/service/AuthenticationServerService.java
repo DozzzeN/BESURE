@@ -6,6 +6,11 @@ import java.util.Map;
 
 public interface AuthenticationServerService {
     /**
+     * 创建用户信息
+     */
+    int createUser(String username, String password);
+
+    /**
      * 保存用户信息
      */
     User saveUser(int uid, String username, String password, String role);

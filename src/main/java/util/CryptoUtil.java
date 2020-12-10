@@ -4,7 +4,9 @@ import it.unisa.dia.gas.jpbc.Element;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigInteger;
 import java.security.*;
+import java.util.Random;
 
 public class CryptoUtil {
     /**
@@ -28,13 +30,62 @@ public class CryptoUtil {
     }
 
     /**
-     * AES加密函数
+     * 获取哈希值
      *
-     * @param key:加密密钥,128或256位
-     * @param data：要加密的数据
+     * @param mode  哈希模式
+     * @param bytes 要哈希的值
+     * @return 哈希过后的值
+     */
+    public static byte[] getHash(String mode, byte[] bytes) {
+        byte[] hash_value = null;
+
+        try {
+            MessageDigest md = MessageDigest.getInstance(mode);
+            hash_value = md.digest(bytes);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return hash_value;
+    }
+
+    /**
+     * ElGamal加密函数
+     *
+     * @param key  加密密钥
+     * @param data 要加密的数据
      * @return 密文
      */
-    public static byte[] aes_encrypt(byte[] key, byte[] data) {
+    public static Element[] ElGamalEncrypt(Element p, Element key, Element data) {
+        int k = new Random().nextInt();
+        Element[] secret = new Element[2];
+
+        secret[0] = p.duplicate().pow(BigInteger.valueOf(k));
+        secret[1] = data.duplicate().add(key.duplicate().pow(BigInteger.valueOf(k)));
+
+        return secret;
+
+    }
+
+    /**
+     * ElGamal解密函数
+     *
+     * @param key  密钥
+     * @param data 密文
+     * @return 明文
+     */
+    public static Element ElGamalDecrypt(Element key, Element[] data) {
+        return data[1].sub(data[0].mulZn(key));
+    }
+
+    /**
+     * AES加密函数
+     *
+     * @param key  加密密钥,128或256位
+     * @param data 要加密的数据
+     * @return 密文
+     */
+    public static byte[] AESEncrypt(byte[] key, byte[] data) {
         String key_algorithm = "AES";
         Cipher cipher;
         try {
@@ -56,7 +107,7 @@ public class CryptoUtil {
      * @param data 密文
      * @return 明文
      */
-    public static byte[] aes_decrypt(byte[] key, byte[] data) {
+    public static byte[] AESDecrypt(byte[] key, byte[] data) {
         String key_algorithm = "AES";
         Cipher cipher;
         try {

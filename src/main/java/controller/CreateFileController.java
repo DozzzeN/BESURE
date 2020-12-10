@@ -46,8 +46,8 @@ public class CreateFileController {
                     //创建文件
                     byte[] encryptedState = ownerServiceImpl.sendStateToAS(file, Integer.valueOf(user.getUid()).toString(), user);
                     byte[] encryptedSignature = authenticationServerServiceImpl.sendSignatureToUser(user, encryptedState);
-                    byte[] signature = CryptoUtil.aes_decrypt(CryptoUtil.getHash("SHA-256", AuthenticationServer.getSk_as()), encryptedSignature);
-                    byte[] state = CryptoUtil.aes_decrypt(CryptoUtil.getHash("SHA-256", AuthenticationServer.getSk_as()), encryptedState);
+                    byte[] signature = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", AuthenticationServer.getSk_as()), encryptedSignature);
+                    byte[] state = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", AuthenticationServer.getSk_as()), encryptedState);
 
                     //存入session
                     session.setAttribute("state", state);
@@ -88,13 +88,13 @@ public class CreateFileController {
     @RequestMapping("editFile")
     private String editFile(HttpSession session, @RequestParam("operateCode") String operateCode) {
         byte[] encryptedState = editorServiceImpl.sendStateToAS(file, Integer.valueOf(user.getUid()).toString(), user);
-        byte[] encryptedlastBlockHash = editorServiceImpl.sendLastBlockHash(file.getFid(), user);
-        byte[] encryptedlastSignature = editorServiceImpl.sendLastSignature(file.getFid(), user);
-        byte[] encryptedSignature = authenticationServerServiceImpl.sendEditSignatureToUser(user, encryptedState, encryptedlastBlockHash, encryptedlastSignature);
-        byte[] signature = CryptoUtil.aes_decrypt(CryptoUtil.getHash("SHA-256", AuthenticationServer.getSk_as()), encryptedSignature);
+        byte[] encryptedLastBlockHash = editorServiceImpl.sendLastBlockHash(file.getFid(), user);
+        byte[] encryptedLastSignature = editorServiceImpl.sendLastSignature(file.getFid(), user);
+        byte[] encryptedSignature = authenticationServerServiceImpl.sendEditSignatureToUser(user, encryptedState, encryptedLastBlockHash, encryptedLastSignature);
+        byte[] signature = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", AuthenticationServer.getSk_as()), encryptedSignature);
         Element newSignature = SysParamServiceImpl.pairing.getG1().newElementFromBytes(signature);
-        byte[] state = CryptoUtil.aes_decrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), encryptedState);
-        byte[] lastBlockHash = CryptoUtil.aes_decrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), encryptedlastBlockHash);
+        byte[] state = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), encryptedState);
+        byte[] lastBlockHash = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", user.getSk_user()), encryptedLastBlockHash);
         //存入session
         session.setAttribute("state", state);
         session.setAttribute("PID", user.getPID());

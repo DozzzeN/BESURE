@@ -20,7 +20,7 @@ public class TransferController {
     private FileService fileServiceImpl;
     @Resource
     private RuleService ruleServiceImpl;
-    private Logger logger = Logger.getLogger(TransferController.class);
+    private final Logger logger = Logger.getLogger(TransferController.class);
 
     @RequestMapping("transfer")
     public String transfer(HttpServletRequest req) {
