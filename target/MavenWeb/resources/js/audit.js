@@ -103,26 +103,6 @@ $(document).ready(function () {
     $("#search").change(function () {
         searchText = $("#search").val();
         console.log(searchText);
-        //审计不需要根据权限搜索
-        // if (searchText == "编辑") {
-        //     $("#file_table tr").not("#tHeader").hide();//保证表头显示
-        //     $("#file_table tr[bianji='true']").show();
-        //     $("#file_table tr[zhuanrang='true']").show();
-        // } else if (searchText == "下载") {
-        //     $("#file_table tr").not("#tHeader").hide();//保证表头显示
-        //     $("#file_table tr[duqu='true']").show();
-        //     $("#file_table tr[bianji='true']").show();
-        //     $("#file_table tr[zhuanrang='true']").show();
-        // } else if (searchText == "转让") {
-        //     $("#file_table tr").not("#tHeader").hide();//保证表头显示
-        //     $("#file_table tr[zhuanrang='true']").show();
-        // } else if (searchText == "删除") {
-        //     $("#file_table tr").not("#tHeader").hide();//保证表头显示
-        //     $("#file_table tr[zhuanrang='true']").show();
-        // } else {
-        //     $("#file_table tr").not("#tHeader").hide();//保证表头显示
-        //     $('#file_table tr:contains(' + searchText + ')').show();//只显示搜索了的
-        // }
         $("#file_table tr").not("#tHeader").hide();//保证表头显示
         $('#file_table tr:contains(' + searchText + ')').show();//只显示搜索了的
     });

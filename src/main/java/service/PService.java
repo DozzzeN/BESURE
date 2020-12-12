@@ -1,6 +1,9 @@
 package service;
 
 import it.unisa.dia.gas.jpbc.Element;
+import pojo.DO.EHR;
+
+import java.util.List;
 
 public interface PService {
     /**
@@ -22,7 +25,9 @@ public interface PService {
     /**
      * return pwP_star
      */
-    void consult_P(String pwP);
+    List<EHR> consult_P(String idP, String pwP);
+
+    List<EHR> sendCk_rou_y_rouToD(String idP, byte[] ck_rou_y_rou);
 
     byte[][] consult3(Element[][] sigma_star_and_lambda_star, Element pwP_star, Element[] sigma_star, String[] idKS, String pwP);
 

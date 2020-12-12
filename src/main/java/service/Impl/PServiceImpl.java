@@ -1,9 +1,11 @@
 package service.Impl;
 
 import it.unisa.dia.gas.jpbc.Element;
+import mapper.ConsultMapper;
+import mapper.ProvStoreMapper;
 import mapper.RegistrationMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pojo.DO.EHR;
 import service.DService;
 import service.HService;
 import service.PService;
@@ -13,6 +15,7 @@ import util.CryptoUtil;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.util.List;
 
 import static service.Impl.KSServiceImpl.*;
 import static service.Impl.SysParamServiceImpl.*;
@@ -27,6 +30,8 @@ public class PServiceImpl implements PService {
     public static Element spwP;
     public static byte[] pidD;
     public static String aux;
+    public static byte[] ck_rou_y_rou;
+    public static Element k_rou_y_rou_plus_1;
     private static Element r;
     private static String tpD;
     @Resource
@@ -34,10 +39,14 @@ public class PServiceImpl implements PService {
     private Element tk;
     private String idP;
     private String idH;
-    @Autowired
+    @Resource
     private HService hServiceImpl;
-    @Autowired
+    @Resource
     private DService dServiceImpl;
+    @Resource
+    private ConsultMapper consultMapper;
+    @Resource
+    private ProvStoreMapper provStoreMapper;
 
     @Override
     public Element blindPw(String pwP) {
@@ -122,8 +131,8 @@ public class PServiceImpl implements PService {
         //send cskP, idP, and auCS to CS
         cskP = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", spwP), skP.toBytes());
         try {
-            byte[] b2 = ArraysUtil.mergeByte(idCS.getBytes("ISO8859-1"), spwP.toBytes());
-            auCS = pairing.getZr().newElementFromHash(b2, 0, b2.length).getImmutable();
+            byte[] idCS_spwP = ArraysUtil.mergeByte(idCS.getBytes("ISO8859-1"), spwP.toBytes());
+            auCS = pairing.getZr().newElementFromHash(idCS_spwP, 0, idCS_spwP.length).getImmutable();
             registrationMapper.toCS(idP, new String(auCS.toBytes(), "ISO8859-1"), new String(cskP));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -140,8 +149,19 @@ public class PServiceImpl implements PService {
     }
 
     @Override
-    public void consult_P(String pwP) {
-        //TODO: authenticate with CS
+    public List<EHR> consult_P(String idP, String pwP) {
+        try {
+            byte[] idCS_spwP = ArraysUtil.mergeByte(idCS.getBytes("ISO8859-1"), spwP.toBytes());
+            Element auCS_prime = pairing.getZr().newElementFromHash(idCS_spwP, 0, idCS_spwP.length).getImmutable();
+            String auCS = consultMapper.selAuCS(idP);
+            if (!auCS_prime.isEqual(
+                    pairing.getZr().newElementFromBytes(auCS.getBytes("ISO8859-1")))) {
+                System.out.println("failed to authenticate with CS!");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         //generate permit to authenticate D
         byte[] perD = ArraysUtil.mergeByte(idP.getBytes(), pidD, tpD.getBytes(), aux.getBytes());
         Element perDHash = pairing.getG1().newElementFromHash(perD, 0, perD.length);
@@ -153,15 +173,28 @@ public class PServiceImpl implements PService {
         //D verify
         dServiceImpl.appoint_D(enc_perD_sigma_perD, perD.length, sigma_perD.toBytes().length);
 
+        //share DH-key
         a = pairing.getZr().newRandomElement().getImmutable();
         Element aP = P.duplicate().mulZn(a.duplicate()).getImmutable();
         Element bP = dServiceImpl.consult_D(aP);
-        Element k_rou_y_rou_plus_1 = bP.duplicate().mulZn(a.duplicate()).getImmutable();
-//        //TODO: encrypt k_rou_y_rou
-//        Element r_prime = pairing.getZr().newRandomElement().getImmutable();
-//        return pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length).
-//                mulZn(r_prime.duplicate()).getImmutable();
+        k_rou_y_rou_plus_1 = bP.duplicate().mulZn(a.duplicate()).getImmutable();
+
+        //download enc_k_rou_y_rou and obtain k_rou_y_rou
+        System.out.println("isTheFirstTime:" + (consultMapper.selMaxStage(idP) == 0));
+        if (!(consultMapper.selMaxStage(idP) == 0)) {
+            byte[] k_rou_y_rou_plus_1 = CryptoUtil.AESDecrypt(CryptoUtil.getHash(
+                    "SHA-256", spwP), CSServiceImpl.enc_k_rou_y_rou_plus_1);//直接获取enc_k_rou_y_rou_plus_1
+            return sendCk_rou_y_rouToD(idP, CryptoUtil.AESEncrypt(CryptoUtil.getHash(
+                    "SHA-256", PServiceImpl.k_rou_y_rou_plus_1), k_rou_y_rou_plus_1));
+        }
+        return null;
     }
+
+    @Override
+    public List<EHR> sendCk_rou_y_rouToD(String idP, byte[] ck_rou_y_rou) {
+        return dServiceImpl.get_k_rou_y_rou(idP, ck_rou_y_rou);
+    }
+
 
     @Override
     public byte[][] consult3(Element[][] sigma_star_and_lambda_star, Element pwP_star, Element[] sigma_star, String[] idKS, String pwP) {

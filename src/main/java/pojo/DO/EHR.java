@@ -1,45 +1,27 @@
 package pojo.DO;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class EHR implements Serializable {
-    public byte[] pidD;
-    public String depName;//
-    public byte[] depID;//
-    public String idP;
+    public String HName;
+    public String HID;
+    public String depName;
+    public String depID;
     public String idD;
-    public String HName;//
-    public byte[] HID;//
-    public byte[] block;//TODO
-    public long startCreateTime;
-    public long endCreateTime;
-    public long startViewTime;//TODO
-    public long endViewTime;//TODO
+    public String idP;
+    public String content;
 
     @Override
     public String toString() {
         return "EHR{" +
-                "pidD=" + Arrays.toString(pidD) +
-                ", depName='" + depName + '\'' +
-                ", depID=" + Arrays.toString(depID) +
+                "depName='" + depName + '\'' +
+                ", depID='" + depID + '\'' +
                 ", idP='" + idP + '\'' +
-                ", hospName='" + HName + '\'' +
-                ", hospID=" + Arrays.toString(HID) +
-                ", block=" + Arrays.toString(block) +
-                ", startCreateTime=" + startCreateTime +
-                ", endCreateTime=" + endCreateTime +
-                ", startViewTime=" + startViewTime +
-                ", endViewTime=" + endViewTime +
+                ", idD='" + idD + '\'' +
+                ", HName='" + HName + '\'' +
+                ", HID='" + HID + '\'' +
+                ", content='" + content + '\'' +
                 '}';
-    }
-
-    public byte[] getPidD() {
-        return pidD;
-    }
-
-    public void setPidD(byte[] pidD) {
-        this.pidD = pidD;
     }
 
     public String getDepName() {
@@ -50,11 +32,11 @@ public class EHR implements Serializable {
         this.depName = depName;
     }
 
-    public byte[] getDepID() {
+    public String getDepID() {
         return depID;
     }
 
-    public void setDepID(byte[] depID) {
+    public void setDepID(String depID) {
         this.depID = depID;
     }
 
@@ -66,6 +48,14 @@ public class EHR implements Serializable {
         this.idP = idP;
     }
 
+    public String getIdD() {
+        return idD;
+    }
+
+    public void setIdD(String idD) {
+        this.idD = idD;
+    }
+
     public String getHName() {
         return HName;
     }
@@ -74,51 +64,19 @@ public class EHR implements Serializable {
         this.HName = HName;
     }
 
-    public byte[] getHID() {
+    public String getHID() {
         return HID;
     }
 
-    public void setHID(byte[] HID) {
+    public void setHID(String HID) {
         this.HID = HID;
     }
 
-    public byte[] getBlock() {
-        return block;
+    public String getContent() {
+        return content;
     }
 
-    public void setBlock(byte[] block) {
-        this.block = block;
-    }
-
-    public long getStartCreateTime() {
-        return startCreateTime;
-    }
-
-    public void setStartCreateTime(long startCreateTime) {
-        this.startCreateTime = startCreateTime;
-    }
-
-    public long getEndCreateTime() {
-        return endCreateTime;
-    }
-
-    public void setEndCreateTime(long endCreateTime) {
-        this.endCreateTime = endCreateTime;
-    }
-
-    public long getStartViewTime() {
-        return startViewTime;
-    }
-
-    public void setStartViewTime(long startViewTime) {
-        this.startViewTime = startViewTime;
-    }
-
-    public long getEndViewTime() {
-        return endViewTime;
-    }
-
-    public void setEndViewTime(long endViewTime) {
-        this.endViewTime = endViewTime;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

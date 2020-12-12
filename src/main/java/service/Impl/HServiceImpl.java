@@ -25,7 +25,12 @@ public class HServiceImpl implements HService {
     @Override
     public boolean authenticate(String idP, Element auH) {
         try {
-            return appointMapper.find(idP, new String(auH.toBytes(), "ISO8859-1")) > 0;
+            if (appointMapper.selIdP(idP, new String(auH.toBytes(), "ISO8859-1")) > 0) {
+                return true;
+            } else {
+                System.out.println("failed to authenticated with H!");
+                return false;
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -47,5 +52,11 @@ public class HServiceImpl implements HService {
         PServiceImpl.pidD = pidD;
         PServiceImpl.aux = "dep";
         return pServiceImpl.sendAppointInfoToPatient(doctor.getID().getBytes().length, Long.toString(tpD).getBytes().length);
+    }
+
+    @Override
+    public Element genSig(byte[] PB_l) {
+        return SysParamServiceImpl.pairing.getG1().newElementFromHash(PB_l, 0, PB_l.length).
+                mulZn(SysParamServiceImpl.skH);
     }
 }

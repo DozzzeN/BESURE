@@ -1,4 +1,3 @@
-//var getAuditor = "https://781d1c54-f045-4362-a006-badc399f7a2a.mock.pstmn.io/getUser";
 //加载区块信息
 function loadBlockInfo(list) {
     for (var i = 0; i < list.length; i++) {
@@ -42,10 +41,6 @@ function clickModeBlock(hashStr) {
         backdrop: 'static',
         keyboard: false
     });
-    //
-    // $('#myModal6').on('hidden.bs.modal', function () {
-    //     $("#blockReviewHeader+tr").empty();
-    // });
 }
 
 //查看单个区块信息
@@ -86,8 +81,6 @@ function loadBlock(txHash) {
                 tableID.rows[i].cells[1].innerHTML = web3.eth.getBlock(txHash).gasLimit;
                 break;
         }
-        //自动换行
-        // c.style.cssText = 'word-wrap: break-word; word-break: break-all;';
     }
 
 }

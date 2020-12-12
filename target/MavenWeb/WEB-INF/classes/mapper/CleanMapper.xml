@@ -16,4 +16,24 @@
         delete
         from t_provenance
     </delete>
+    <delete id="deleteCS">
+        delete
+        from t_cs
+    </delete>
+    <delete id="deleteH">
+        delete
+        from t_h
+    </delete>
+    <delete id="deleteKS">
+        delete
+        from t_ks
+    </delete>
+    <delete id="deleteUser">
+        delete
+        from t_user
+    </delete>
+    <delete id="deleteEhr">
+        delete
+        from t_ehr
+    </delete>
 </mapper>

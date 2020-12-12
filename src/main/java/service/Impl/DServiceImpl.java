@@ -1,26 +1,45 @@
 package service.Impl;
 
 import it.unisa.dia.gas.jpbc.Element;
+import mapper.ConsultMapper;
+import mapper.ProvStoreMapper;
 import org.springframework.stereotype.Service;
 import pojo.DO.EHR;
+import pojo.DO.Provenance;
 import service.CSService;
 import service.DService;
+import service.HService;
 import util.ArraysUtil;
 import util.BytesUtil;
 import util.CryptoUtil;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
-import static service.Impl.SysParamServiceImpl.P;
-import static service.Impl.SysParamServiceImpl.pairing;
+import static service.Impl.SysParamServiceImpl.*;
 
 @Service
 public class DServiceImpl implements DService {
     public static Element k_rou_y_rou_plus_1;
+    public static byte[] pidD;
+    public static Element sigma_PB_l;
+    public static EHR ehr;
+    public static byte[] perD;
+    public static byte[] sigma_perD;
+    public static Provenance PB_l;
+    public static byte[] C_rou_y_rou_plus_1;
     @Resource
     private CSService csServiceImpl;
+    @Resource
+    private HService hServiceImpl;
+    @Resource
+    private ProvStoreMapper provStoreMapper;
+    @Resource
+    private ConsultMapper consultMapper;
     private Element tk;
-    private byte[] pidD;
 
     @Override
     public Element consult_D(Element aP) {
@@ -36,30 +55,41 @@ public class DServiceImpl implements DService {
     }
 
     @Override
-    public byte[] createEHR(String idP) {
-        EHR ehr = new EHR();
-        ehr.setPidD(pidD);
-        ehr.setEndCreateTime(System.currentTimeMillis());
-        ehr.setStartCreateTime(System.currentTimeMillis());
-        ehr.setIdP(idP);
+    public void createEHR(String idP, EHR ehr) {
+        DServiceImpl.ehr = ehr;
         byte[] ehrBytes = BytesUtil.toByteArray(ehr);
-        return CryptoUtil.AESEncrypt(
+        C_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(
                 CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1.duplicate()), ehrBytes);
+        int currentStage = consultMapper.selMaxStage(idP) + 1;
+        if (currentStage == 1) {
+            if (!(consultMapper.insC_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou_plus_1),
+                    Base64.getEncoder().encodeToString(k_rou_y_rou_plus_1.toBytes())) > 0)) {
+                System.out.println("update c_rou_y_rou failed!");
+            }
+        } else {
+            byte[] ck_rou_y_rou = Base64.getDecoder().decode(provStoreMapper.selCk_rou_y_rouByStage(idP, currentStage - 1));
+            byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
+            if (!(consultMapper.insC_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou_plus_1),
+                    Base64.getEncoder().encodeToString(ck_rou_y_rou_plus_1)) > 0)) {
+                System.out.println("update c_rou_y_rou failed!");
+            }
+        }
     }
 
     @Override
     public void sendTKPIDDToDoctor(Element tk, byte[] pidD) {
         this.tk = tk;
-        this.pidD = pidD;
+        DServiceImpl.pidD = pidD;
     }
 
     @Override
     public void appoint_D(byte[] enc_perD_sigma_perD, int length, int length1) {
-        byte[] perD_sigma_perD = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", tk.toBytes()), enc_perD_sigma_perD);
+        byte[] perD_sigma_perD = CryptoUtil.AESDecrypt(
+                CryptoUtil.getHash("SHA-256", tk.toBytes()), enc_perD_sigma_perD);
 
         byte[][] splitByte = ArraysUtil.splitByte(perD_sigma_perD, length, length1);
-        byte[] perD = splitByte[0];
-        byte[] sigma_perD = splitByte[1];
+        perD = splitByte[0];
+        sigma_perD = splitByte[1];
 
         Element left = SysParamServiceImpl.pairing.pairing(
                 SysParamServiceImpl.pairing.getG1().newElementFromBytes(sigma_perD), SysParamServiceImpl.P);
@@ -70,6 +100,105 @@ public class DServiceImpl implements DService {
 
         if (!left.isEqual(right)) {
             System.out.println("Doctor's verification failed!");
+        }
+    }
+
+    @Override
+    public String outsource(String idP) {
+        //check if the first time come to this department
+        //generate PB_l
+        PB_l = new Provenance();
+        byte[] ehrHash = CryptoUtil.getHash("SHA-256", ehr.content.getBytes());
+        PB_l.setEhrHash(new String(ehrHash));
+        PB_l.setPidD(new String(pidD));
+        PB_l.setDepName(ehr.depName);
+        PB_l.setDepID(ehr.depID);
+        PB_l.setIdP(idP);
+        PB_l.setHName(ehr.HName);
+        PB_l.setHID(ehr.HID);
+        PB_l.setStartCreateTime(System.currentTimeMillis());
+        PB_l.setEndCreateTime(System.currentTimeMillis());
+
+        if (consultMapper.selMaxStage(idP) == 1) {
+            PB_l.setViewHash(new ArrayList<>());
+            PB_l.setBlock(null);
+            PB_l.setStartViewTime(0L);
+            PB_l.setEndViewTime(0L);
+            if (!sendPBToH(BytesUtil.toByteArray(PB_l))) {
+                System.out.println("signature sigma_PB_l verification failed!");
+            }
+        } else {
+            int lastStage = consultMapper.selMaxStage(idP);
+            //TODO add view ehr
+            PB_l.setViewHash(new ArrayList<>());
+            PB_l.getViewHash().add(
+                    new String(CryptoUtil.getHash("SHA-256", ehr.content.getBytes())));
+            PB_l.setBlock(provStoreMapper.selBl_l(idP, lastStage));
+            PB_l.setStartViewTime(System.currentTimeMillis());
+            PB_l.setEndViewTime(System.currentTimeMillis());
+
+            String PB_l_minus_1 = provStoreMapper.selPB_l(idP, lastStage);
+            if (!sendPBToH(BytesUtil.toByteArray(PB_l)) && sendPBToH(PB_l_minus_1.getBytes())) {
+                System.out.println("signature sigma_PB_l verification failed!");
+            }
+        }
+        //send TX
+        byte[] provBytes_hash = CryptoUtil.getHash("SHA-256", BytesUtil.toByteArray(PB_l));
+        Element PB_l_hash = pairing.getZr().newElementFromHash(provBytes_hash, 0, provBytes_hash.length);
+        byte[] PB_l_hash_sigma_PB_l_hash = CryptoUtil.getHash(
+                "SHA-256", ArraysUtil.mergeByte(PB_l_hash.toBytes(), sigma_PB_l.toBytes()));
+        try {
+            return new String(pairing.getZr().newElementFromHash(
+                    PB_l_hash_sigma_PB_l_hash, 0, PB_l_hash_sigma_PB_l_hash.length).toBytes(), "ISO8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean sendPBToH(byte[] PB_l) {
+        sigma_PB_l = hServiceImpl.genSig(PB_l);
+
+        //verify
+        Element left = pairing.pairing(sigma_PB_l, P).getImmutable();
+        Element right = pairing.pairing(pairing.getG1().newElementFromHash(PB_l, 0, PB_l.length), pkH);
+
+        return left.isEqual(right);
+    }
+
+    @Override
+    public void sendBlockHash(String idP, String blockHash) {
+        //send blockHash to CS
+        csServiceImpl.receiveProv(idP, PB_l, blockHash, sigma_PB_l, C_rou_y_rou_plus_1, perD, sigma_perD);
+    }
+
+    @Override
+    public List<EHR> get_k_rou_y_rou(String idP, byte[] ck_rou_y_rou) {
+        //解密已存的最新的密钥明文
+        byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash(
+                "SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
+        if (csServiceImpl.authenticate(perD, sigma_perD)) {
+            List<String> ck_rou_y_rouList = consultMapper.selCk_rou_y_rou(idP);
+            List<String> C_rou_y_rouList = consultMapper.selC_rou_y_rou(idP);
+            System.out.println("ck_rou_y_rouList" + ck_rou_y_rouList);
+            System.out.println("C_rou_y_rouList" + C_rou_y_rouList);
+            List<EHR> ehrList = new ArrayList<>();//解密所有已存的病历
+            byte[] key = k_rou_y_rou;
+            byte[] lastKey;
+            for (int i = ck_rou_y_rouList.size() - 1; i > 0; i--) {
+                lastKey = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", key),
+                        Base64.getDecoder().decode(ck_rou_y_rouList.get(i)));
+                key = lastKey;
+                EHR ehr = (EHR) BytesUtil.toObject(
+                        CryptoUtil.AESDecrypt(lastKey, Base64.getDecoder().decode(C_rou_y_rouList.get(i))));
+                System.out.println("EHR" + ehr);
+                ehrList.add(ehr);
+            }
+            return ehrList;
+        } else {
+            System.out.println("CS authentication failed!");
+            return null;
         }
     }
 }
