@@ -8,8 +8,8 @@ import org.apache.ibatis.annotations.Update;
 public interface ProvStoreMapper {
     @Update("update t_ehr " +
             "set c_rou_y_rou=#{c_rou_y_rou}, PB_l=#{PB_l}, Bl_l=#{Bl_l} " +
-            "where idP=#{idP}")
-    int updPB_l(@Param("idP") String idP, @Param("c_rou_y_rou") String c_rou_y_rou,
+            "where idP=#{idP} and stage=#{stage}")
+    int updPB_l(@Param("idP") String idP, @Param("stage") int stage, @Param("c_rou_y_rou") String c_rou_y_rou,
                 @Param("PB_l") String PB_l, @Param("Bl_l") String Bl_l);
 
     @Select("select ck_rou_y_rou from t_ehr " +
@@ -18,8 +18,8 @@ public interface ProvStoreMapper {
 
     @Update("update t_ehr " +
             "set ck_rou_y_rou=#{ck_rou_y_rou} " +
-            "where idP=#{idP}")
-    int updCk_rou_y_rou(@Param("idP") String idP, @Param("ck_rou_y_rou") String ck_rou_y_rou);
+            "where idP=#{idP} and stage=#{stage}")
+    int updCk_rou_y_rou(@Param("idP") String idP, @Param("stage") int stage, @Param("ck_rou_y_rou") String ck_rou_y_rou);
 
     @Select("select PB_l from t_ehr " +
             "where idP=#{idP} and stage=#{stage}")

@@ -16,13 +16,13 @@
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title><fmt:message key="auditorPage"/></title>
     <!-- Bootstrap -->
-    <link href="../ESP4/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="../ESP4/resources/js/jquery-3.1.0.min.js"></script>
-    <script src="../ESP4/resources/js/bignumber.js"></script>
-    <script src="../ESP4/resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <script src="../ESP4/resources/node_modules/web3/dist/web3.min.js"></script>
-    <script src="../ESP4/resources/js/audit.js"></script>
-    <link href="../ESP4/resources/css/audit.css" rel="stylesheet" type="text/css"/>
+    <link href="../BESURE/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../BESURE/resources/js/jquery-3.1.0.min.js"></script>
+    <script src="../BESURE/resources/js/bignumber.js"></script>
+    <script src="../BESURE/resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="../BESURE/resources/node_modules/web3/dist/web3.min.js"></script>
+    <script src="../BESURE/resources/js/audit.js"></script>
+    <link href="../BESURE/resources/css/audit.css" rel="stylesheet" type="text/css"/>
 </head>
 <body onload="onLoad();">
 <%
@@ -42,7 +42,7 @@
     <div class='box row'>
         <div class='col-md-2'>
             <br>
-            <img class='img-responsive' src="../ESP4/resources/img/newlogo.png" alt="<fmt:message key="imageFail"/>">
+            <img class='img-responsive' src="../BESURE/resources/img/newlogo.png" alt="<fmt:message key="imageFail"/>">
         </div>
         <div class='col-md-8'>
             <p class='p1'><fmt:message key="title"/></p>
@@ -271,8 +271,8 @@
     }
 
 </script>
-<script type="text/javascript" src="../ESP4/resources/js/headroom.js"></script>
-<script type="text/javascript" src="../ESP4/resources/js/jQuery.headroom.js"></script>
+<script type="text/javascript" src="../BESURE/resources/js/headroom.js"></script>
+<script type="text/javascript" src="../BESURE/resources/js/jQuery.headroom.js"></script>
 <script type="text/javascript">
     $(".navbar-fixed-top").headroom();
 
@@ -319,7 +319,7 @@
     }
 
     function clickModeReview(id) {
-        fId = id;
+        fid = id;
         $.ajax({
             type: "get",
             url: "retrieve?operate=stage&fid=" + fId,
@@ -339,7 +339,7 @@
         });
     }
 
-    var jsonAddress = "../../ESP4/build/contracts/Provenance.json";
+    var jsonAddress = "../../BESURE/build/contracts/Provenance.json";
     var CONTRACT_ADDRESS = "${contract}";
     var web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
     $("#postAudition").click(function () {

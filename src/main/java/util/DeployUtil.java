@@ -17,7 +17,7 @@ public class DeployUtil {
     static {
         classpath = new StringBuilder(Objects.requireNonNull(
                 DeployUtil.class.getClassLoader().getResource("")).getPath());
-        //path D:/java/IdeaProjects/ESP4/target/MavenWeb/
+        //path D:/java/IdeaProjects/BESURE/target/MavenWeb/
         path = new DeployUtil().getPath(classpath);
         propertiesPath = path + propertiesSuffix;
     }
@@ -30,7 +30,7 @@ public class DeployUtil {
      * 在windows下调用dos命令
      */
     public static String deploy() {
-//        String strCmd = "cd " + "D:/java/IdeaProjects/ESP4/src/main/web"+ " && truffle migrate";
+//        String strCmd = "cd " + "D:/java/IdeaProjects/BESURE/src/main/web"+ " && truffle migrate";
         String strCmd = "cd " + path + " && truffle migrate";
         System.out.println(strCmd);
         //通过cmd程序执行cmd命令来部署智能合约
@@ -113,7 +113,7 @@ public class DeployUtil {
     }
 
     /**
-     * 将/D:/java/IdeaProjects/ESP4/web/WEB-INF/classes/转为D:/java/IdeaProjects/ESP4/web/
+     * 将/D:/java/IdeaProjects/BESURE/web/WEB-INF/classes/转为D:/java/IdeaProjects/BESURE/web/
      */
     public String getPath(StringBuilder path) {
         //最后一个/的位置

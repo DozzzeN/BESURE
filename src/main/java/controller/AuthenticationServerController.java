@@ -88,4 +88,10 @@ public class AuthenticationServerController {
     public int returnRuleCode(@RequestParam("code") int code) {
         return code;
     }
+
+    @RequestMapping("data")
+    @ResponseBody
+    public String returnRuleCode(@RequestParam("data") String data) {
+        return data;
+    }
 }

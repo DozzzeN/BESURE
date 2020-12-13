@@ -52,10 +52,10 @@ public class DeployUtilTest {
      */
     @Test
     public void testGetPath() throws Exception {
-        System.out.println(new DeployUtil().getPath(new StringBuilder("/D:/java/IdeaProjects/ESP4/web/WEB-INF/")));
+        System.out.println(new DeployUtil().getPath(new StringBuilder("/D:/java/IdeaProjects/BESURE/web/WEB-INF/")));
         assertThat(new DeployUtil().getPath(
-                new StringBuilder("/D:/java/IdeaProjects/ESP4/web/WEB-INF/classes/")),
-                is("D:/java/IdeaProjects/ESP4/web/")
+                new StringBuilder("/D:/java/IdeaProjects/BESURE/web/WEB-INF/classes/")),
+                is("D:/java/IdeaProjects/BESURE/web/")
         );
     }
 }

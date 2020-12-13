@@ -14,10 +14,8 @@ import util.BytesUtil;
 import util.CryptoUtil;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 import static service.Impl.SysParamServiceImpl.*;
 
@@ -104,7 +102,7 @@ public class DServiceImpl implements DService {
     }
 
     @Override
-    public String outsource(String idP) {
+    public byte[] outsource(String idP) {
         //check if the first time come to this department
         //generate PB_l
         PB_l = new Provenance();
@@ -147,13 +145,8 @@ public class DServiceImpl implements DService {
         Element PB_l_hash = pairing.getZr().newElementFromHash(provBytes_hash, 0, provBytes_hash.length);
         byte[] PB_l_hash_sigma_PB_l_hash = CryptoUtil.getHash(
                 "SHA-256", ArraysUtil.mergeByte(PB_l_hash.toBytes(), sigma_PB_l.toBytes()));
-        try {
-            return new String(pairing.getZr().newElementFromHash(
-                    PB_l_hash_sigma_PB_l_hash, 0, PB_l_hash_sigma_PB_l_hash.length).toBytes(), "ISO8859-1");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return pairing.getZr().newElementFromHash(
+                PB_l_hash_sigma_PB_l_hash, 0, PB_l_hash_sigma_PB_l_hash.length).toBytes();
     }
 
     @Override
@@ -174,28 +167,33 @@ public class DServiceImpl implements DService {
     }
 
     @Override
-    public List<EHR> get_k_rou_y_rou(String idP, byte[] ck_rou_y_rou) {
+    public EHR get_k_rou_y_rou(String idP, int stage, byte[] ck_rou_y_rou) {
         //解密已存的最新的密钥明文
         byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash(
                 "SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
         if (csServiceImpl.authenticate(perD, sigma_perD)) {
-            List<String> ck_rou_y_rouList = consultMapper.selCk_rou_y_rou(idP);
-            List<String> C_rou_y_rouList = consultMapper.selC_rou_y_rou(idP);
-            System.out.println("ck_rou_y_rouList" + ck_rou_y_rouList);
-            System.out.println("C_rou_y_rouList" + C_rou_y_rouList);
-            List<EHR> ehrList = new ArrayList<>();//解密所有已存的病历
-            byte[] key = k_rou_y_rou;
-            byte[] lastKey;
-            for (int i = ck_rou_y_rouList.size() - 1; i > 0; i--) {
-                lastKey = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", key),
-                        Base64.getDecoder().decode(ck_rou_y_rouList.get(i)));
-                key = lastKey;
-                EHR ehr = (EHR) BytesUtil.toObject(
-                        CryptoUtil.AESDecrypt(lastKey, Base64.getDecoder().decode(C_rou_y_rouList.get(i))));
-                System.out.println("EHR" + ehr);
-                ehrList.add(ehr);
+            if (stage == 1) {
+                EHR ehr = (EHR) BytesUtil.toObject(CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou),
+                        Base64.getDecoder().decode(consultMapper.selC_rou_y_rou(idP, stage))));
+                return ehr;
+            } else {
+                EHR ehr = (EHR) BytesUtil.toObject(CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou),
+                        Base64.getDecoder().decode(consultMapper.selC_rou_y_rou(idP, stage))));
+                return ehr;
             }
-            return ehrList;
+//            List<String> ck_rou_y_rouList = consultMapper.selCk_rou_y_rou(idP);
+//            List<String> C_rou_y_rouList = consultMapper.selC_rou_y_rou(idP);
+//            System.out.println("ck_rou_y_rouList" + ck_rou_y_rouList);
+//            System.out.println("C_rou_y_rouList" + C_rou_y_rouList);
+//            byte[] key = k_rou_y_rou;
+//            for (int i = ck_rou_y_rouList.size() - 1; i > 1; i--) {
+//                EHR ehr = (EHR) BytesUtil.toObject(
+//                        CryptoUtil.AESDecrypt(key, Base64.getDecoder().decode(C_rou_y_rouList.get(i))));
+//                System.out.println("EHR" + ehr);
+//                key = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", key),
+//                        Base64.getDecoder().decode(ck_rou_y_rouList.get(i)));
+//                ehrList.add(ehr);
+//            }
         } else {
             System.out.println("CS authentication failed!");
             return null;

@@ -10,7 +10,7 @@
 2. Compile the source code  
 `mvn compile`
 3. Configure Tomcat server  
-set HTTP port as 8888 and URL as http://localhost:8888/ESP4/login  
+set HTTP port as 8888 and URL as http://localhost:8888/BESURE/login  
 4. Run Tomcat server  
 Ganache generates two transactions and smart contract has been deployed successfully.  
 

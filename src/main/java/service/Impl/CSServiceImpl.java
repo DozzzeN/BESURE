@@ -18,7 +18,6 @@ import static service.Impl.SysParamServiceImpl.*;
 
 @Service
 public class CSServiceImpl implements CSService {
-    public static byte[] enc_k_rou_y_rou_plus_1;
     @Resource
     private ProvStoreMapper provStoreMapper;
     @Resource
@@ -44,18 +43,21 @@ public class CSServiceImpl implements CSService {
             System.out.println("Cloud server's verification failed!");
         } else {
             //store PB_l and Bl_l
-            if (provStoreMapper.updPB_l(idP, Base64.getEncoder().encodeToString(C_rou_y_rou),
+            int currentStage = consultMapper.selMaxStage(idP);
+            if (provStoreMapper.updPB_l(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou),
                     new String(BytesUtil.toByteArray(PB_l)), blockHash) > 0) {
-                enc_k_rou_y_rou_plus_1 = updateKey();
-                if (!(consultMapper.selMaxStage(idP) == 1)) {
-                    //还要ck_rou_y_rou_plus_1
-                    int lastStage = consultMapper.selMaxStage(idP) - 1;
+                byte[] enc_k_rou_y_rou_plus_1 = updateKey();
+                //还要ck_rou_y_rou_plus_1
+                int lastStage = currentStage - 1;
+                if (lastStage > 0) {
                     byte[] ck_rou_y_rou = Base64.getDecoder().decode(
                             provStoreMapper.selCk_rou_y_rouByStage(idP, lastStage));
-                    byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", PServiceImpl.k_rou_y_rou_plus_1),
+                    byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", spwP),
                             ck_rou_y_rou);
-                    store(idP, ck_rou_y_rou_plus_1);
+                    byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), k_rou_y_rou);
+                    store(idP, currentStage, ck_rou_y_rou_plus_1);
                 }
+                provStoreMapper.updCk_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(enc_k_rou_y_rou_plus_1));
             } else {
                 System.out.println("update PB_l and Bl_l failed!");
             }
@@ -68,8 +70,8 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public void store(String idP, byte[] ck_rou_y_rou) {
-        if (provStoreMapper.updCk_rou_y_rou(idP, Base64.getEncoder().encodeToString(ck_rou_y_rou)) > 0) {
+    public void store(String idP, int stage, byte[] ck_rou_y_rou) {
+        if (provStoreMapper.updCk_rou_y_rou(idP, stage, Base64.getEncoder().encodeToString(ck_rou_y_rou)) > 0) {
             System.out.println("update ck_rou_y_rou succeeded!");
         } else {
             System.out.println("update ck_rou_y_rou failed!");

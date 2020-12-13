@@ -15,7 +15,7 @@ import util.CryptoUtil;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.util.List;
+import java.util.Base64;
 
 import static service.Impl.KSServiceImpl.*;
 import static service.Impl.SysParamServiceImpl.*;
@@ -149,7 +149,7 @@ public class PServiceImpl implements PService {
     }
 
     @Override
-    public List<EHR> consult_P(String idP, String pwP) {
+    public EHR consult_P(String idP, String pwP) {
         try {
             byte[] idCS_spwP = ArraysUtil.mergeByte(idCS.getBytes("ISO8859-1"), spwP.toBytes());
             Element auCS_prime = pairing.getZr().newElementFromHash(idCS_spwP, 0, idCS_spwP.length).getImmutable();
@@ -180,19 +180,21 @@ public class PServiceImpl implements PService {
         k_rou_y_rou_plus_1 = bP.duplicate().mulZn(a.duplicate()).getImmutable();
 
         //download enc_k_rou_y_rou and obtain k_rou_y_rou
-        System.out.println("isTheFirstTime:" + (consultMapper.selMaxStage(idP) == 0));
-        if (!(consultMapper.selMaxStage(idP) == 0)) {
+        int maxStage = consultMapper.selMaxStage(idP);
+        System.out.println("isTheFirstTime:" + (maxStage == 0));
+        if (!(maxStage == 0)) {
+            byte[] enc_k_rou_y_rou_plus_1 = Base64.getDecoder().decode(provStoreMapper.selCk_rou_y_rouByStage(idP, maxStage));
             byte[] k_rou_y_rou_plus_1 = CryptoUtil.AESDecrypt(CryptoUtil.getHash(
-                    "SHA-256", spwP), CSServiceImpl.enc_k_rou_y_rou_plus_1);//直接获取enc_k_rou_y_rou_plus_1
-            return sendCk_rou_y_rouToD(idP, CryptoUtil.AESEncrypt(CryptoUtil.getHash(
+                    "SHA-256", spwP), enc_k_rou_y_rou_plus_1);
+            return sendCk_rou_y_rouToD(idP, maxStage, CryptoUtil.AESEncrypt(CryptoUtil.getHash(
                     "SHA-256", PServiceImpl.k_rou_y_rou_plus_1), k_rou_y_rou_plus_1));
         }
         return null;
     }
 
     @Override
-    public List<EHR> sendCk_rou_y_rouToD(String idP, byte[] ck_rou_y_rou) {
-        return dServiceImpl.get_k_rou_y_rou(idP, ck_rou_y_rou);
+    public EHR sendCk_rou_y_rouToD(String idP, int stage, byte[] ck_rou_y_rou) {
+        return dServiceImpl.get_k_rou_y_rou(idP, stage, ck_rou_y_rou);
     }
 
 

@@ -11,5 +11,5 @@ public interface CSService {
 
     byte[] updateKey();
 
-    void store(String idP, byte[] ck_rou_y_rou);
+    void store(String idP, int stage, byte[] ck_rou_y_rou);
 }

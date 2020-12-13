@@ -11,7 +11,6 @@ import service.PService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Controller
 public class ConsultController {
@@ -21,14 +20,15 @@ public class ConsultController {
     private DService dServiceImpl;
 
     @RequestMapping("consult")
-    @ResponseBody()
-    public List<EHR> consult(HttpServletRequest req) {
+    @ResponseBody
+    public EHR consult(HttpServletRequest req) {
         User user = ((User) req.getSession().getAttribute("user"));
 
         //return ehrList for doctor's view
-        List<EHR> ehrList = pServiceImpl.consult_P(user.getUname(), user.getPassword());
-        System.out.println(ehrList);
-        return ehrList;
+        EHR ehr = pServiceImpl.consult_P(user.getUname(), user.getPassword());
+        System.out.println(ehr);
+        return ehr;
+//        return ehr == null ? "forward:data?data=none" : ("forward:data?data=" + ehr.getContent());
     }
 
     @RequestMapping("ehr")

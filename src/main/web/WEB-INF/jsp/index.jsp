@@ -15,17 +15,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title><fmt:message key="ownerPage"/></title>
-    <link href="../ESP4/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../ESP4/resources/layui/css/layui.css" rel="stylesheet">
-    <script src="../ESP4/resources/js/jquery-3.1.0.min.js"></script>
-    <script src="../ESP4/resources/js/bignumber.js"></script>
-    <script src="../ESP4/resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <script src="../ESP4/resources/layui/layui.js"></script>
-    <script src="../ESP4/resources/node_modules/web3/dist/web3.min.js"></script>
-    <script src="../ESP4/resources/js/headroom.js"></script>
-    <script src="../ESP4/resources/js/jQuery.headroom.js"></script>
-    <link href="../ESP4/resources/css/index.css" rel="stylesheet" type="text/css"/>
+    <link href="../BESURE/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../BESURE/resources/layui/css/layui.css" rel="stylesheet">
+    <script src="../BESURE/resources/js/jquery-3.1.0.min.js"></script>
+    <script src="../BESURE/resources/js/bignumber.js"></script>
+    <script src="../BESURE/resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="../BESURE/resources/layui/layui.js"></script>
+    <script src="../BESURE/resources/node_modules/web3/dist/web3.min.js"></script>
+    <script src="../BESURE/resources/js/headroom.js"></script>
+    <script src="../BESURE/resources/js/jQuery.headroom.js"></script>
+    <link href="../BESURE/resources/css/index.css" rel="stylesheet" type="text/css"/>
 </head>
+<body>
 <%
     HttpSession userSession = request.getSession();
     User user = (User) userSession.getAttribute("user");
@@ -43,7 +44,7 @@
     <div class='box row'>
         <div class='col-md-2'>
             <br>
-            <img class='img-responsive' src="../ESP4/resources/img/newlogo.png" alt="<fmt:message key="imageFail"/>">
+            <img class='img-responsive' src="../BESURE/resources/img/newlogo.png" alt="<fmt:message key="imageFail"/>">
         </div>
         <div class='col-md-8'>
             <p class='p1'><fmt:message key="title"/></p>
@@ -129,33 +130,6 @@
     </div>
 </footer>
 
-<!--上传模态框-->
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel"><fmt:message key="upload"/></h4>
-            </div>
-            <div class="modal-body ">
-                <div class='row'>
-                    <!-- 文件上传 -->
-                    <form class="navbar-form navbar-left" id="upload" name="upload_file" action="upload" method="post"
-                          enctype="multipart/form-data">
-                        <p class='col-md-4'><fmt:message key="uploadChoose"/></p>
-                        <p class='col-md-5'><input id="uploadFileName" type="file" name="file"/></p>
-                        <p class='col-md-3'><input id="upload_file" type="submit" value="<fmt:message key="upload"/>"/>
-                        </p>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><fmt:message key="close"/></button>
-            </div>
-        </div>
-    </div>
-</div>
 <%--EHR模态框--%>
 <%--layui.code--%>
 <div class="modal fade" id="ehrModal">
@@ -170,57 +144,67 @@
                 <div class='row'>
                     <form id="ehrForm" class="layui-form" action="">
                         <div class="layui-form-item">
-                            <label class="layui-form-label">医院名</label>
+                            <label class="layui-form-label"><fmt:message key="hospitalName"/></label>
                             <div class="layui-input-block">
                                 <input type="text" name="HName" required lay-verify="required" style="width: 200px"
-                                       placeholder="请输入医院名" autocomplete="off" class="layui-input">
+                                       placeholder="<fmt:message key="input"/><fmt:message key="hospitalName"/>"
+                                       autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">医院ID</label>
+                            <label class="layui-form-label"><fmt:message key="hospitalID"/></label>
                             <div class="layui-input-block">
-                                <input type="text" name="HID" required lay-verify="required" placeholder="请输入医院ID"
+                                <input type="text" name="HID" required lay-verify="required"
+                                       placeholder="<fmt:message key="input"/><fmt:message key="hospitalID"/>"
                                        style="width: 200px" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">科室名</label>
+                            <label class="layui-form-label"><fmt:message key="departmentName"/></label>
                             <div class="layui-input-block">
                                 <input type="text" name="depName" required lay-verify="required" style="width: 200px"
-                                       placeholder="请输入科室名" autocomplete="off" class="layui-input">
+                                       placeholder="<fmt:message key="input"/><fmt:message key="departmentName"/>"
+                                       autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">科室ID</label>
+                            <label class="layui-form-label"><fmt:message key="departmentID"/></label>
                             <div class="layui-input-block">
-                                <input type="text" name="depID" required lay-verify="required" placeholder="请输入科室ID"
+                                <input type="text" name="depID" required lay-verify="required"
+                                       placeholder="<fmt:message key="input"/><fmt:message key="departmentID"/>"
                                        style="width: 200px" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">医生ID</label>
+                            <label class="layui-form-label"><fmt:message key="doctorID"/></label>
                             <div class="layui-input-block">
                                 <input type="text" name="idD" required lay-verify="required" style="width: 200px"
-                                       placeholder="请输入医生ID" autocomplete="off" class="layui-input">
+                                       placeholder="<fmt:message key="input"/><fmt:message key="doctorID"/>"
+                                       autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">病人ID</label>
+                            <label class="layui-form-label"><fmt:message key="patientID"/></label>
                             <div class="layui-input-block">
-                                <input type="text" name="idP" required lay-verify="required" placeholder="请输入病人ID"
+                                <input type="text" name="idP" required lay-verify="required"
+                                       placeholder="<fmt:message key="input"/><fmt:message key="patientID"/>"
                                        style="width: 200px" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item layui-form-text">
-                            <label class="layui-form-label">病历内容</label>
+                            <label class="layui-form-label"><fmt:message key="ehrContent"/></label>
                             <div class="layui-input-block">
-                                <textarea name="content" placeholder="请输入病例" class="layui-textarea"></textarea>
+                                <textarea name="content"
+                                          placeholder="<fmt:message key="input"/><fmt:message key="ehrContent"/>"
+                                          class="layui-textarea"></textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                <button class="layui-btn" lay-submit lay-filter="formDemo"><fmt:message
+                                        key="submit"/></button>
+                                <button type="reset" class="layui-btn layui-btn-primary"><fmt:message
+                                        key="reset"/></button>
                             </div>
                         </div>
                     </form>
@@ -245,10 +229,10 @@
                 data: ehrData,
                 success: function (code) {
                     if (code == 1) {
-                        alert("病例记录上传成功！")
+                        alert("<fmt:message key="submitSucceeded"/>")
                         $("#ehrModal").modal('hide');
                     } else {
-                        alert("病例记录上传失败！")
+                        alert("<fmt:message key="submitFailed"/>")
                     }
                 },
             })
@@ -287,34 +271,21 @@
 </div>
 
 <script type='text/javascript'>
-    var jsonAddress = "../../ESP4/build/contracts/Provenance.json";
-    var web3js = "";
-    var web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+    let jsonAddress = "../../BESURE/build/contracts/Provenance.json";
+    let web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
     $(document).ready(function () {
-        //初始化meta mask的web3环境
-        //合约地址可由后台返回
-        //network不一致，导致无法使用metamask内置的web3，故使用本地web3库
-        var CONTRACT_ADDRESS = "${contract}";
-        if (typeof web3 !== 'undefined') {
-            //     // Use Mist/MetaMask's provider
-            //     web3js = new Web3(web3.currentProvider);
-            //     console.log(web3js);
-            // } else {
-            console.log('No web3? You should consider trying MetaMask!');
-            web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-        }
+        let CONTRACT_ADDRESS = "${contract}";
 
         function createTX() {
-            //加定时器无法实现
             $.getJSON(jsonAddress, function (data) {
                 //创建合约
-                var Provenance = web3js.eth.contract(data.abi).at(CONTRACT_ADDRESS);
-                var param = { //扣取gas的账户地址
+                let Provenance = web3js.eth.contract(data.abi).at(CONTRACT_ADDRESS);
+                let param = { //扣取gas的账户地址
                     from: web3js.eth.accounts[0],
                     gas: 3000000 //不限制gas值会产生out of gas的错误
                 };
                 //调用合约函数
-                var blockHash;
+                let blockHash;
                 Provenance.Create("${user.uname}", "${txContent}", param, function (error, result) {
                     if (!error) {
                         alert("<fmt:message key="createSuccess"/>");
@@ -363,6 +334,9 @@
                         alert("<fmt:message key="appointFailed"/>");
                     }
                 },
+                error: function (XMLResponse) {
+                    alert("<fmt:message key="error"/>" + XMLResponse.responseText);
+                }
             })
         });
 
@@ -373,14 +347,11 @@
                 type: "post",
                 dataType: "json",
                 success: function (data) {
-                    if (data != null) {
-                        alert("<fmt:message key="consultSucceeded"/>");
-                        alert(data)
-                        location.href = "index";
-                    } else {
-                        alert("<fmt:message key="consultFailed"/>");
-                    }
+                    alert(data.content);
                 },
+                error: function () {
+                    alert("<fmt:message key="error"/>");
+                }
             })
         });
 
@@ -398,6 +369,9 @@
                         alert("<fmt:message key="provStoreFailed"/>");
                     }
                 },
+                error: function (XMLResponse) {
+                    alert("<fmt:message key="error"/>" + XMLResponse.responseText);
+                }
             })
         });
     })

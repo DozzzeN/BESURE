@@ -1,6 +1,6 @@
 var auditFileId = [];
 var auditFileName = [];
-var fId;
+var fid;
 var audits = [];
 var json = "";
 
@@ -110,13 +110,13 @@ $(document).ready(function () {
     //清空table
     $("#myModal5").on('hidden.bs.modal', function () {
         //清空数据
-        fId = null;
+        fid = null;
         $("#fileReviewHeader").nextAll().remove();
     });
 
     $("#myModal1").on('hidden.bs.modal', function () {
         //清空数据
-        fId = null;
+        fid = null;
         $("#fileReviewHeader").nextAll().remove();
     });
 });

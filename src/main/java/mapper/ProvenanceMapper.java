@@ -33,6 +33,6 @@ public interface ProvenanceMapper {
     @Select("select txHash from t_provenance where fid = #{fid} and fileStage = #{fileStage}")
     String selTxHashByFidFileStage(@Param("fid") int fid, @Param("fileStage") int fileStage);
 
-    @Select("select blockHash from t_provenance")
+    @Select("select Bl_l from t_ehr")
     List<String> selAllBlock();
 }

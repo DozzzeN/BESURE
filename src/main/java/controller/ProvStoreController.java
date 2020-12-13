@@ -8,6 +8,7 @@ import service.DService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Base64;
 
 @Controller
 public class ProvStoreController {
@@ -18,9 +19,10 @@ public class ProvStoreController {
     public String provStore(HttpServletRequest req) {
         HttpSession session = req.getSession();
         String idP = ((User) req.getSession().getAttribute("user")).getUname();
-        String txContent = dServiceImpl.outsource(idP);
+        byte[] txContent = dServiceImpl.outsource(idP);
 
-        session.setAttribute("txContent", txContent);
+        //需要编码，否则前端报错
+        session.setAttribute("txContent", Base64.getEncoder().encode(txContent));
         if (txContent != null) {
             return "forward:code?code=1";
         } else {

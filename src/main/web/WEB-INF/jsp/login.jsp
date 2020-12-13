@@ -17,10 +17,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都必须跟随其后！ -->
     <!-- 注意路径的写法，路径并不存在，经过mvc来解析后可以找到 -->
-    <link href="../ESP4/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="../ESP4/resources/js/jquery-3.1.0.min.js"></script>
-    <script src="../ESP4/resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <link href="../ESP4/resources/css/login.css" rel="stylesheet" type="text/css"/>
+    <link href="../BESURE/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../BESURE/resources/js/jquery-3.1.0.min.js"></script>
+    <script src="../BESURE/resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link href="../BESURE/resources/css/login.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <header class="container-fluid">

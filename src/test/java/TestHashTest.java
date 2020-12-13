@@ -38,7 +38,7 @@ public class TestHashTest {
     @Test
     public void testFileHashValue() throws Exception {
         assertEquals("88a162ddcca3654ffc4d7700fd02b574", TestHash.bytesToHexString(Objects.requireNonNull(
-                TestHash.fileHashValue("D:\\java\\IdeaProjects\\ESP4\\ESP4.iml"))));
+                TestHash.fileHashValue("D:\\java\\IdeaProjects\\BESURE\\BESURE.iml"))));
     }
 
 
