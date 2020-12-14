@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="MySQL for 5.1 - esp@localhost" uuid="27af0b1a-5833-4fce-8038-abf471f58ea9">
+    <data-source source="LOCAL" name="MySQL for 5.1 - BESURE@localhost" uuid="8272db18-ec20-40e2-a229-b31bf5a3165c">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/esp</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/BESURE</jdbc-url>
     </data-source>
   </component>
 </project>

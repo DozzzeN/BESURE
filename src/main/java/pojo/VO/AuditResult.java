@@ -2,18 +2,25 @@ package pojo.VO;
 
 public class AuditResult {
     private boolean checkPn;
-    private boolean checkSt_n;
-    private boolean checkAmount;
-    private boolean checkRestPn;
+    private boolean checkSig;
+    private boolean checkHash;
 
     public AuditResult() {
     }
 
-    public AuditResult(boolean checkPn, boolean checkSt_n, boolean checkAmount, boolean checkRestPn) {
+    public AuditResult(boolean checkPn, boolean checkSig, boolean checkHash) {
         this.checkPn = checkPn;
-        this.checkSt_n = checkSt_n;
-        this.checkAmount = checkAmount;
-        this.checkRestPn = checkRestPn;
+        this.checkSig = checkSig;
+        this.checkHash = checkHash;
+    }
+
+    @Override
+    public String toString() {
+        return "AuditResult{" +
+                "checkPn=" + checkPn +
+                ", checkSig=" + checkSig +
+                ", checkHash=" + checkHash +
+                '}';
     }
 
     public boolean isCheckPn() {
@@ -24,37 +31,19 @@ public class AuditResult {
         this.checkPn = checkPn;
     }
 
-    public boolean isCheckSt_n() {
-        return checkSt_n;
+    public boolean isCheckSig() {
+        return checkSig;
     }
 
-    public void setCheckSt_n(boolean checkSt_n) {
-        this.checkSt_n = checkSt_n;
+    public void setCheckSig(boolean checkSig) {
+        this.checkSig = checkSig;
     }
 
-    public boolean isCheckAmount() {
-        return checkAmount;
+    public boolean isCheckHash() {
+        return checkHash;
     }
 
-    public void setCheckAmount(boolean checkAmount) {
-        this.checkAmount = checkAmount;
-    }
-
-    public boolean isCheckRestPn() {
-        return checkRestPn;
-    }
-
-    public void setCheckRestPn(boolean checkRestPn) {
-        this.checkRestPn = checkRestPn;
-    }
-
-    @Override
-    public String toString() {
-        return "AuditResult{" +
-                "checkPn=" + checkPn +
-                ", checkSt_n=" + checkSt_n +
-                ", checkAmount=" + checkAmount +
-                ", checkRestPn=" + checkRestPn +
-                '}';
+    public void setCheckHash(boolean checkHash) {
+        this.checkHash = checkHash;
     }
 }

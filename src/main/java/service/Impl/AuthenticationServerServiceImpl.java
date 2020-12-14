@@ -6,8 +6,6 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.DO.AuthenticationServer;
 import pojo.DO.User;
-import pojo.VO.Auditor;
-import pojo.VO.Editor;
 import pojo.VO.Owner;
 import service.AuthenticationServerService;
 import util.ArraysUtil;
@@ -35,22 +33,14 @@ public class AuthenticationServerServiceImpl implements AuthenticationServerServ
     TODO:待优化，考虑工厂方法模式
      */
     @Override
-    public User saveUser(int uid, String username, String password, String role) {
-        switch (role) {
-            case "creator":
-                return new Owner(uid, username, password, role);
-            case "editor":
-                return new Editor(uid, username, password, role);
-            case "auditor":
-                return new Auditor(uid, username, password, role);
-        }
-        return null;
+    public User saveUser(int uid, String username, String password) {
+        return new Owner(uid, username, password);
     }
 
     @Override
-    public int checkUser(String username, String password, String role) {
-        if (userMapper.selByUnamePwdRole(username, password, role) > 0) {
-            return userMapper.selByUnamePwdRole(username, password, role);
+    public int checkUser(String username, String password) {
+        if (userMapper.selByUnamePwdRole(username, password) > 0) {
+            return userMapper.selByUnamePwdRole(username, password);
         } else {
             return -1;
         }

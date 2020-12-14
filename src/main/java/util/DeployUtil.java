@@ -31,7 +31,7 @@ public class DeployUtil {
      */
     public static String deploy() {
 //        String strCmd = "cd " + "D:/java/IdeaProjects/BESURE/src/main/web"+ " && truffle migrate";
-        String strCmd = "cd " + path + " && truffle migrate";
+        String strCmd = "cd " + path + " && truffle compile && truffle migrate";
         System.out.println(strCmd);
         //通过cmd程序执行cmd命令来部署智能合约
         Process process = null;

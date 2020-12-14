@@ -11,7 +11,6 @@ import pojo.VO.Editor;
 import pojo.VO.Owner;
 import service.AuthenticationServerService;
 import service.OwnerService;
-import service.SysParamService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +23,6 @@ public class AuthenticationServerController {
     @Resource
     private AuthenticationServerService authenticationServerServiceImpl;
     @Resource
-    private SysParamService sysParamServiceImpl;
-    @Resource
     private OwnerService ownerServiceImpl;
 
     /**
@@ -37,18 +34,15 @@ public class AuthenticationServerController {
         //获取表单数据
         String uname = req.getParameter("username");
         String password = req.getParameter("password");
-        String role = req.getParameter("userIdentity");
-        int uid = authenticationServerServiceImpl.checkUser(uname, password, role);
+        int uid = authenticationServerServiceImpl.checkUser(uname, password);
 
         //根据不同用户角色返回不同对象
-        User user = authenticationServerServiceImpl.saveUser(uid, uname, password, role);
+        User user = authenticationServerServiceImpl.saveUser(uid, uname, password);
         logger.warn("用户" + user.getUname() + "开始登录");
         //用户登录
         if (uid > 0) {
             logger.warn("AS验证用户ID：" + uid + "和pwd：" + password + "通过");
             logger.error("用户" + user.getUname() + "登录成功");
-//            //初始化参数
-//            sysParamServiceImpl.init();
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
             //密钥协商

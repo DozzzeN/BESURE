@@ -14,10 +14,9 @@ public interface UserMapper {
      */
     @Select("select ifnull(max(uid),0) " +
             "from t_user " +
-            "where uname = #{uname} and password = #{password} and role = #{role}")
+            "where uname = #{uname} and password = #{password}")
     int selByUnamePwdRole(@Param("uname") String uname,
-                          @Param("password") String password,
-                          @Param("role") String role);
+                          @Param("password") String password);
 
     /**
      * 存入（更新）PID

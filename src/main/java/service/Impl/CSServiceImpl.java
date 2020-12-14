@@ -10,6 +10,7 @@ import util.BytesUtil;
 import util.CryptoUtil;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import static service.Impl.PServiceImpl.k_rou_y_rou_plus_1;
@@ -44,22 +45,27 @@ public class CSServiceImpl implements CSService {
         } else {
             //store PB_l and Bl_l
             int currentStage = consultMapper.selMaxStage(idP);
-            if (provStoreMapper.updPB_l(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou),
-                    new String(BytesUtil.toByteArray(PB_l)), blockHash) > 0) {
-                byte[] enc_k_rou_y_rou_plus_1 = updateKey();
-                //还要ck_rou_y_rou_plus_1
-                int lastStage = currentStage - 1;
-                if (lastStage > 0) {
-                    byte[] ck_rou_y_rou = Base64.getDecoder().decode(
-                            provStoreMapper.selCk_rou_y_rouByStage(idP, lastStage));
-                    byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", spwP),
-                            ck_rou_y_rou);
-                    byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), k_rou_y_rou);
-                    store(idP, currentStage, ck_rou_y_rou_plus_1);
+            try {
+                if (provStoreMapper.updPB_l(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou),
+                        new String(BytesUtil.toByteArray(PB_l), "ISO8859-1"), blockHash,
+                        new String(sigma_PB_l.toBytes(), "ISO8859-1")) > 0) {
+                    byte[] enc_k_rou_y_rou_plus_1 = updateKey();
+                    //还要ck_rou_y_rou_plus_1
+                    int lastStage = currentStage - 1;
+                    if (lastStage > 0) {
+                        byte[] ck_rou_y_rou = Base64.getDecoder().decode(
+                                provStoreMapper.selCk_rou_y_rouByStage(idP, lastStage));
+                        byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", spwP),
+                                ck_rou_y_rou);
+                        byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), k_rou_y_rou);
+                        store(idP, currentStage, ck_rou_y_rou_plus_1);
+                    }
+                    provStoreMapper.updCk_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(enc_k_rou_y_rou_plus_1));
+                } else {
+                    System.out.println("update PB_l and Bl_l failed!");
                 }
-                provStoreMapper.updCk_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(enc_k_rou_y_rou_plus_1));
-            } else {
-                System.out.println("update PB_l and Bl_l failed!");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
         }
     }

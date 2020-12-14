@@ -116,13 +116,15 @@ public class DServiceImpl implements DService {
         PB_l.setHID(ehr.HID);
         PB_l.setStartCreateTime(System.currentTimeMillis());
         PB_l.setEndCreateTime(System.currentTimeMillis());
+        Element sigma_PB_l = hServiceImpl.genSig(BytesUtil.toByteArray(PB_l));
+        DServiceImpl.sigma_PB_l = sigma_PB_l;
 
         if (consultMapper.selMaxStage(idP) == 1) {
             PB_l.setViewHash(new ArrayList<>());
             PB_l.setBlock(null);
             PB_l.setStartViewTime(0L);
             PB_l.setEndViewTime(0L);
-            if (!sendPBToH(BytesUtil.toByteArray(PB_l))) {
+            if (!sendPBToH(sigma_PB_l, BytesUtil.toByteArray(PB_l))) {
                 System.out.println("signature sigma_PB_l verification failed!");
             }
         } else {
@@ -135,8 +137,10 @@ public class DServiceImpl implements DService {
             PB_l.setStartViewTime(System.currentTimeMillis());
             PB_l.setEndViewTime(System.currentTimeMillis());
 
-            String PB_l_minus_1 = provStoreMapper.selPB_l(idP, lastStage);
-            if (!sendPBToH(BytesUtil.toByteArray(PB_l)) && sendPBToH(PB_l_minus_1.getBytes())) {
+            String PB_l_minus_1 = provStoreMapper.selPB_l(idP, lastStage - 1);
+            Element sigma_PB_l_minus_1 = hServiceImpl.genSig(PB_l_minus_1.getBytes());
+            if (!(sendPBToH(sigma_PB_l_minus_1, PB_l_minus_1.getBytes()))
+                    && sendPBToH(sigma_PB_l, BytesUtil.toByteArray(PB_l))) {
                 System.out.println("signature sigma_PB_l verification failed!");
             }
         }
@@ -150,9 +154,7 @@ public class DServiceImpl implements DService {
     }
 
     @Override
-    public boolean sendPBToH(byte[] PB_l) {
-        sigma_PB_l = hServiceImpl.genSig(PB_l);
-
+    public boolean sendPBToH(Element sigma_PB_l, byte[] PB_l) {
         //verify
         Element left = pairing.pairing(sigma_PB_l, P).getImmutable();
         Element right = pairing.pairing(pairing.getG1().newElementFromHash(PB_l, 0, PB_l.length), pkH);
@@ -173,13 +175,11 @@ public class DServiceImpl implements DService {
                 "SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
         if (csServiceImpl.authenticate(perD, sigma_perD)) {
             if (stage == 1) {
-                EHR ehr = (EHR) BytesUtil.toObject(CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou),
+                return (EHR) BytesUtil.toObject(CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou),
                         Base64.getDecoder().decode(consultMapper.selC_rou_y_rou(idP, stage))));
-                return ehr;
             } else {
-                EHR ehr = (EHR) BytesUtil.toObject(CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou),
+                return (EHR) BytesUtil.toObject(CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou),
                         Base64.getDecoder().decode(consultMapper.selC_rou_y_rou(idP, stage))));
-                return ehr;
             }
 //            List<String> ck_rou_y_rouList = consultMapper.selCk_rou_y_rou(idP);
 //            List<String> C_rou_y_rouList = consultMapper.selC_rou_y_rou(idP);

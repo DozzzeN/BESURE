@@ -6,4 +6,8 @@ public class Owner extends User {
     public Owner(int uid, String uname, String password, String role) {
         super(uid, uname, password, role);
     }
+
+    public Owner(int uid, String uname, String password) {
+        super(uid, uname, password);
+    }
 }

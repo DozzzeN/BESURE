@@ -2,12 +2,13 @@ package controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import pojo.DO.User;
 import service.DService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 @Controller
@@ -16,18 +17,18 @@ public class ProvStoreController {
     private DService dServiceImpl;
 
     @RequestMapping("provStore")
+    @ResponseBody
     public String provStore(HttpServletRequest req) {
-        HttpSession session = req.getSession();
         String idP = ((User) req.getSession().getAttribute("user")).getUname();
         byte[] txContent = dServiceImpl.outsource(idP);
-
-        //需要编码，否则前端报错
-        session.setAttribute("txContent", Base64.getEncoder().encode(txContent));
-        if (txContent != null) {
-            return "forward:code?code=1";
-        } else {
-            return "forward:code?code=0";
+        String txContentStr = "";
+        try {
+            //需要编码，否则前端报错
+            txContentStr = new String(Base64.getEncoder().encode(txContent), "ISO8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+        return txContentStr;
     }
 
     @RequestMapping("afterProvStore")

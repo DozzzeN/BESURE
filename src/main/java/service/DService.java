@@ -17,7 +17,7 @@ public interface DService {
 
     byte[] outsource(String idP);
 
-    boolean sendPBToH(byte[] PB_l);
+    boolean sendPBToH(Element sigma_PB_l, byte[] PB_l);
 
     void sendBlockHash(String idP, String blockHash);
 
