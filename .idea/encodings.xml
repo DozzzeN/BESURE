@@ -2,12 +2,14 @@
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sql/besure.sql" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/controller/AppointController.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/controller/RegistrationController.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/mapper/AppointMapper.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/mapper/RegistrationMapper.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/main/java/pojo/VO/Doctor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/pojo/DO/Doctor.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/pojo/DO/Doctor.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/web/WEB-INF/jsp/registration.jsp" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/web/resources/layui" charset="GBK" />

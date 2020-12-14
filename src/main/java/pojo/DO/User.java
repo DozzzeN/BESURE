@@ -6,7 +6,6 @@ public class User {
     private int uid;
     private String uname;
     private String password;
-    private String role;
     private String PID;
     private Element sk_user;
 
@@ -17,21 +16,6 @@ public class User {
         this.uid = uid;
         this.uname = uname;
         this.password = password;
-    }
-
-    public User(int uid, String uname, String password, String role) {
-        this.uid = uid;
-        this.uname = uname;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User(int uid, String uname, String password, String role, String PID) {
-        this.uid = uid;
-        this.uname = uname;
-        this.password = password;
-        this.role = role;
-        this.PID = PID;
     }
 
     public int getUid() {
@@ -58,14 +42,6 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getPID() {
         return PID;
     }
@@ -88,7 +64,6 @@ public class User {
                 "uid=" + uid +
                 ", uname='" + uname + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
                 ", PID='" + PID + '\'' +
                 ", sk_user=" + sk_user +
                 '}';

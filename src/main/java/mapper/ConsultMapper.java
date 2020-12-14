@@ -8,12 +8,6 @@ public interface ConsultMapper {
     @Select("select auCS from t_cs where idP=#{idP}")
     String selAuCS(@Param("idP") String idP);
 
-//    @Select("select ck_rou_y_rou from t_ehr where idP=#{idP}")
-//    List<String> selCk_rou_y_rou(@Param("idP") String idP);
-//
-//    @Select("select c_rou_y_rou from t_ehr where idP=#{idP}")
-//    List<String> selC_rou_y_rou(@Param("idP") String idP);
-
     @Select("select c_rou_y_rou from t_ehr where idP=#{idP} and stage=#{stage}")
     String selC_rou_y_rou(@Param("idP") String idP, @Param("stage") int stage);
 

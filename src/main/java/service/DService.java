@@ -2,7 +2,7 @@ package service;
 
 
 import it.unisa.dia.gas.jpbc.Element;
-import pojo.DO.EHR;
+import pojo.VO.EHR;
 
 public interface DService {
     void sendTKPIDDToDoctor(Element tk, byte[] pid_d);

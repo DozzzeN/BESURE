@@ -6,24 +6,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pojo.DO.User;
-import pojo.VO.Auditor;
-import pojo.VO.Editor;
-import pojo.VO.Owner;
 import service.AuthenticationServerService;
-import service.OwnerService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class AuthenticationServerController {
     @Resource
     private AuthenticationServerService authenticationServerServiceImpl;
-    @Resource
-    private OwnerService ownerServiceImpl;
 
     /**
      * 登录验证
@@ -45,28 +37,7 @@ public class AuthenticationServerController {
             logger.error("用户" + user.getUname() + "登录成功");
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
-            //密钥协商
-            logger.warn("AS与用户开始协商会话密钥");
-            Map<String, Object> C1C2Map = ownerServiceImpl.sendC1C2ToAS(user);
-            Map<String, Object> C3C4Map = authenticationServerServiceImpl.receiveC1C2FromUser_sendC3C4ToUser(C1C2Map);
-            Map<String, Object> map = new HashMap<>();
-            map.putAll(C1C2Map);
-            map.putAll(C3C4Map);
-            user = ownerServiceImpl.getSessionKey(map, user);
-            //数据库存入PID
-            if (authenticationServerServiceImpl.createPID(user.getPID(), user.getUid()) > 0) {
-                logger.error("数据库存入PID成功");
-            } else {
-                logger.error("数据库存入PID失败");
-            }
-            //TODO:add editor
-            if (user instanceof Owner || user instanceof Editor) {
-                session.setAttribute("role", "owner");
-                return "forward:/code?code=1";
-            } else if (user instanceof Auditor) {
-                session.setAttribute("role", "auditor");
-                return "forward:/code?code=2";
-            }
+            return "forward:/code?code=1";
         } else if (uid == -1) {
             logger.error("用户" + user.getUname() + "登录失败");
             return "redirect:/login";
@@ -81,11 +52,5 @@ public class AuthenticationServerController {
     @ResponseBody
     public int returnRuleCode(@RequestParam("code") int code) {
         return code;
-    }
-
-    @RequestMapping("data")
-    @ResponseBody
-    public String returnRuleCode(@RequestParam("data") String data) {
-        return data;
     }
 }

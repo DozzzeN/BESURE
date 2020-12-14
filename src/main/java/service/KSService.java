@@ -10,9 +10,4 @@ public interface KSService {
     Element[] genSpw(Element pwP_star);
 
     void register_KHC(Element[] au);
-
-    Element[][] consult1(String idP, Element pwP_star);
-
-    boolean consult2(byte[][] encrypted_lambda_star);
-
 }

@@ -1,4 +1,4 @@
-package pojo.DO;
+package pojo.VO;
 
 import java.io.Serializable;
 import java.util.List;

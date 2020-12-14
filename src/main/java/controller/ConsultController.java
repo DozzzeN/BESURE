@@ -4,8 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pojo.DO.EHR;
 import pojo.DO.User;
+import pojo.VO.EHR;
 import service.DService;
 import service.PService;
 
@@ -28,7 +28,6 @@ public class ConsultController {
         EHR ehr = pServiceImpl.consult_P(user.getUname(), user.getPassword());
         System.out.println(ehr);
         return ehr;
-//        return ehr == null ? "forward:data?data=none" : ("forward:data?data=" + ehr.getContent());
     }
 
     @RequestMapping("ehr")
@@ -40,5 +39,4 @@ public class ConsultController {
         System.out.println(ehr);
         return "forward:code?code=1";
     }
-
 }

@@ -56,9 +56,6 @@ public class DeployContractAndClearDataInView implements Filter {
         try (InputStream is = Resources.getResourceAsStream("mybatis-config.xml")) {
             SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(is);
             session = factory.openSession();
-            session.delete("clean.deleteFile");
-            session.delete("clean.deleteRule");
-            session.delete("clean.deleteProvenance");
             session.delete("clean.deleteCS");
             session.delete("clean.deleteH");
             session.delete("clean.deleteKS");

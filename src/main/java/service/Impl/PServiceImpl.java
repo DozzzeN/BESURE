@@ -5,7 +5,7 @@ import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
 import mapper.RegistrationMapper;
 import org.springframework.stereotype.Service;
-import pojo.DO.EHR;
+import pojo.VO.EHR;
 import service.DService;
 import service.HService;
 import service.PService;
@@ -195,93 +195,6 @@ public class PServiceImpl implements PService {
     @Override
     public EHR sendCk_rou_y_rouToD(String idP, int stage, byte[] ck_rou_y_rou) {
         return dServiceImpl.get_k_rou_y_rou(idP, stage, ck_rou_y_rou);
-    }
-
-
-    @Override
-    public byte[][] consult3(Element[][] sigma_star_and_lambda_star, Element pwP_star, Element[] sigma_star, String[] idKS, String pwP) {
-        //check Eq.2
-        for (int i = 1; i < n + 1; i++) {
-            Element left = pairing.pairing(sigma_star_and_lambda_star[0][i], P).getImmutable();
-            Element right = pairing.pairing(pwP_star, Qs[i]).getImmutable();
-            if (!left.isEqual(right)) {
-                System.out.println("Eq.2 does not hold");
-            }
-        }
-
-        //generate sigma_pw
-        Element tmp = pairing.getG1().newElement().getImmutable();
-        Element subtmp = pairing.getG1().newElement().getImmutable();
-        for (int l = 1; l < t; l++) {
-            for (int e = 1; e <= t; e++) {
-                if (e == l) continue;
-                if (e == 1) {
-                    tmp = tmp.duplicate().pow(BigInteger.valueOf(1 / (e - l))).getImmutable();
-                } else if (e - l == 1) {
-                    tmp = tmp.duplicate().pow(BigInteger.valueOf(e)).getImmutable();
-                } else {
-                    tmp = tmp.duplicate().pow(BigInteger.valueOf(e / (e - l))).getImmutable();
-                }
-            }
-            tmp = tmp.duplicate().mul(sigma_star[l].duplicate()).getImmutable();
-            subtmp = subtmp.duplicate().add(tmp.duplicate()).getImmutable();
-            tmp = pairing.getG1().newElement().getImmutable();
-        }
-
-        Element sigma_pw_temp = subtmp.duplicate().mulZn(r.negate().duplicate()).getImmutable();
-
-        Element sigma_pw = pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length).getImmutable().mulZn(s.duplicate()).getImmutable();
-
-        //generate spwP
-        Element l_temp = pairing.pairing(sigma_pw_temp.duplicate(), P.duplicate()).getImmutable();
-        Element r = pairing.pairing(pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length), Q.duplicate()).getImmutable();
-        Element l = pairing.pairing(sigma_pw.duplicate(), P.duplicate()).getImmutable();
-        if (!l.isEqual(r)) {
-            System.out.println("Eq.3 does not hold");
-        } else {
-            try {
-                byte[] b = ArraysUtil.mergeByte(sigma_pw.toBytes(), pwP.getBytes("ISO8859-1"));
-//                spwP = pairing.getZr().newElementFromHash(b, 0, b.length).getImmutable();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-
-        au = new Element[n + 1];
-        for (int i = 1; i < n + 1; i++) {
-            byte[] b1 = new byte[0];
-            try {
-                b1 = ArraysUtil.mergeByte(idKS[i].getBytes("ISO8859-1"), spwP.toBytes());
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            au[i] = pairing.getZr().newElementFromHash(b1, 0, b1.length);
-        }
-
-        byte[][] encrypted_lambda_star = new byte[n + 1][];
-
-        for (int i = 1; i < n + 1; i++) {
-            encrypted_lambda_star[i] = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", au[i]), sigma_star_and_lambda_star[1][i].toBytes());
-        }
-
-        return encrypted_lambda_star;
-    }
-
-    @Override
-    public Element consult4(String idCS, Element spwP) {
-        try {
-            byte[] b1 = ArraysUtil.mergeByte(idCS.getBytes("ISO8859-1"), spwP.toBytes());
-            return pairing.getZr().newElementFromHash(b1, 0, b1.length);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public byte[] consult5(byte[] ck_rou_y_rou, byte[] ck_rou_y_rou_plus_1) {
-        byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", spwP), ck_rou_y_rou);
-        return CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", ck_rou_y_rou_plus_1), k_rou_y_rou);
     }
 
     @Override

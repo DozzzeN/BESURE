@@ -4,7 +4,7 @@ import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
 import org.springframework.stereotype.Service;
-import pojo.DO.Provenance;
+import pojo.VO.Provenance;
 import service.CSService;
 import util.BytesUtil;
 import util.CryptoUtil;

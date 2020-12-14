@@ -15,7 +15,6 @@ import static service.Impl.SysParamServiceImpl.*;
 
 @Service
 public class AuditServiceImpl implements AuditService {
-    private static int lastStage;
     private static byte[] sigma_PB_lBytes;
     private static byte[] PB_l;
     @Resource
@@ -25,7 +24,7 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public boolean checkSig(String idP) {
-        lastStage = consultMapper.selMaxStage(idP);
+        int lastStage = consultMapper.selMaxStage(idP);
         try {
             sigma_PB_lBytes = provStoreMapper.selSigma_PB_l(idP, lastStage).getBytes("ISO8859-1");
             Element sigma_PB_l = SysParamServiceImpl.pairing.getG1().newElementFromBytes(sigma_PB_lBytes);

@@ -3,8 +3,6 @@ package service.Impl;
 import it.unisa.dia.gas.jpbc.Element;
 import org.springframework.stereotype.Service;
 import service.KSService;
-import util.ArraysUtil;
-import util.CryptoUtil;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -109,26 +107,5 @@ public class KSServiceImpl implements KSService {
     @Override
     public void register_KHC(Element[] au) {
 
-    }
-
-    @Override
-    public Element[][] consult1(String idP, Element pwP_star) {
-        Element[][] sigma_star_and_lambda_star = new Element[2][n + 1];
-        for (int i = 1; i < n + 1; i++) {
-            sigma_star_and_lambda_star[0][i] = pwP_star.duplicate().mulZn(ss[i].duplicate());
-            sigma_star_and_lambda_star[1][i] = pairing.getZr().newRandomElement().getImmutable();
-        }
-        return sigma_star_and_lambda_star;
-    }
-
-    public boolean consult2(byte[][] encrypted_lambda_star) {
-        boolean res = true;
-        for (int i = 1; i < n + 1; i++) {
-            if (!ArraysUtil.isEqual(lambda_star[i].toBytes(), CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", PServiceImpl.au[i]), encrypted_lambda_star[i]))) {
-                res = false;
-                break;
-            }
-        }
-        return res;
     }
 }

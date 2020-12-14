@@ -1,7 +1,7 @@
 package service;
 
 import it.unisa.dia.gas.jpbc.Element;
-import pojo.DO.Provenance;
+import pojo.VO.Provenance;
 
 public interface CSService {
     boolean authenticate(byte[] perD, byte[] sigma_perD);
