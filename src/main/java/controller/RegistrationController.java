@@ -34,7 +34,7 @@ public class RegistrationController {
 
         sysParamServiceImpl.init();
 
-        Element pwP_star = pServiceImpl.blindPw(idP).getImmutable();
+        Element pwP_star = pServiceImpl.blindPw(pwP).getImmutable();
         Element[] sigma_star = ksServiceImpl.genSpw(pwP_star);
         Element spwP = pServiceImpl.getSpw(sigma_star, pwP_star, KSServiceImpl.Qs, pwP);
 

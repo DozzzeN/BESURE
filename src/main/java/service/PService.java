@@ -18,7 +18,7 @@ public interface PService {
 
     int authenticate(String idP);
 
-    int sendAppointInfoToPatient(int idDLength, int tpDLength);
+    int sendAppointInfoToPatient(int idDLength, int tpDLength, int tkLength);
 
     /**
      * return pwP_star

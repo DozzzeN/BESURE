@@ -3,6 +3,7 @@ package service.Impl;
 import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.EHR;
 import pojo.VO.Provenance;
@@ -29,6 +30,7 @@ public class DServiceImpl implements DService {
     public static byte[] sigma_perD;
     public static Provenance PB_l;
     public static byte[] C_rou_y_rou_plus_1;
+    private final Logger logger = Logger.getLogger(DServiceImpl.class);
     @Resource
     private CSService csServiceImpl;
     @Resource
@@ -39,12 +41,12 @@ public class DServiceImpl implements DService {
     private ConsultMapper consultMapper;
     private Element tk;
 
+
     @Override
-    public Element consult_D(Element aP) {
-        Element b = pairing.getZr().newRandomElement().getImmutable();
-        k_rou_y_rou_plus_1 = aP.duplicate().mulZn(b.duplicate()).getImmutable();
-        //send bP to P
-        return P.duplicate().mulZn(b.duplicate()).getImmutable();
+    public void consult_D() {
+//        Element b = pairing.getZr().newRandomElement().getImmutable();
+//        k_rou_y_rou_plus_1 = aP.duplicate().mulZn(b.duplicate()).getImmutable();
+        k_rou_y_rou_plus_1 = pairing.getZr().newRandomElement().getImmutable();
     }
 
     @Override
@@ -62,14 +64,14 @@ public class DServiceImpl implements DService {
         if (currentStage == 1) {
             if (!(consultMapper.insC_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou_plus_1),
                     Base64.getEncoder().encodeToString(k_rou_y_rou_plus_1.toBytes())) > 0)) {
-                System.out.println("update c_rou_y_rou failed!");
+                logger.warn("update c_rou_y_rou failed!");
             }
         } else {
             byte[] ck_rou_y_rou = Base64.getDecoder().decode(provStoreMapper.selCk_rou_y_rouByStage(idP, currentStage - 1));
             byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
             if (!(consultMapper.insC_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou_plus_1),
                     Base64.getEncoder().encodeToString(ck_rou_y_rou_plus_1)) > 0)) {
-                System.out.println("update c_rou_y_rou failed!");
+                logger.warn("update c_rou_y_rou failed!");
             }
         }
     }
@@ -97,7 +99,7 @@ public class DServiceImpl implements DService {
         Element right = SysParamServiceImpl.pairing.pairing(hash_perD, SysParamServiceImpl.pkP);
 
         if (!left.isEqual(right)) {
-            System.out.println("Doctor's verification failed!");
+            logger.warn("Doctor's verification failed!");
         }
     }
 
@@ -121,11 +123,11 @@ public class DServiceImpl implements DService {
 
         if (consultMapper.selMaxStage(idP) == 1) {
             PB_l.setViewHash(new ArrayList<>());
-            PB_l.setBlock(null);
+//            PB_l.setBlock(null);
             PB_l.setStartViewTime(0L);
             PB_l.setEndViewTime(0L);
             if (!sendPBToH(sigma_PB_l, BytesUtil.toByteArray(PB_l))) {
-                System.out.println("signature sigma_PB_l verification failed!");
+                logger.warn("signature sigma_PB_l verification failed!");
             }
         } else {
             int lastStage = consultMapper.selMaxStage(idP);
@@ -133,7 +135,7 @@ public class DServiceImpl implements DService {
             PB_l.setViewHash(new ArrayList<>());
             PB_l.getViewHash().add(
                     new String(CryptoUtil.getHash("SHA-256", ehr.content.getBytes())));
-            PB_l.setBlock(provStoreMapper.selBl_l(idP, lastStage));
+//            PB_l.setBlock(provStoreMapper.selBl_l(idP, lastStage));
             PB_l.setStartViewTime(System.currentTimeMillis());
             PB_l.setEndViewTime(System.currentTimeMillis());
 
@@ -141,7 +143,7 @@ public class DServiceImpl implements DService {
             Element sigma_PB_l_minus_1 = hServiceImpl.genSig(PB_l_minus_1.getBytes());
             if (!(sendPBToH(sigma_PB_l_minus_1, PB_l_minus_1.getBytes()))
                     && sendPBToH(sigma_PB_l, BytesUtil.toByteArray(PB_l))) {
-                System.out.println("signature sigma_PB_l verification failed!");
+                logger.warn("signature sigma_PB_l verification failed!");
             }
         }
         //send TX
@@ -183,19 +185,16 @@ public class DServiceImpl implements DService {
             }
 //            List<String> ck_rou_y_rouList = consultMapper.selCk_rou_y_rou(idP);
 //            List<String> C_rou_y_rouList = consultMapper.selC_rou_y_rou(idP);
-//            System.out.println("ck_rou_y_rouList" + ck_rou_y_rouList);
-//            System.out.println("C_rou_y_rouList" + C_rou_y_rouList);
 //            byte[] key = k_rou_y_rou;
 //            for (int i = ck_rou_y_rouList.size() - 1; i > 1; i--) {
 //                EHR ehr = (EHR) BytesUtil.toObject(
 //                        CryptoUtil.AESDecrypt(key, Base64.getDecoder().decode(C_rou_y_rouList.get(i))));
-//                System.out.println("EHR" + ehr);
 //                key = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", key),
 //                        Base64.getDecoder().decode(ck_rou_y_rouList.get(i)));
 //                ehrList.add(ehr);
 //            }
         } else {
-            System.out.println("CS authentication failed!");
+            logger.warn("CS authentication failed!");
             return null;
         }
     }

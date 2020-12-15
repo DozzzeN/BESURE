@@ -140,11 +140,11 @@
             <classifier>jdk15</classifier>
         </dependency>
         <!-- jpbc -->
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>bcprov-jdk</artifactId>
-            <version>1.0</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>bcprov-jdk</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.dyc</groupId>
             <artifactId>jna</artifactId>
@@ -180,7 +180,6 @@
             <artifactId>jpbc-pbc</artifactId>
             <version>1.0</version>
         </dependency>
-        <!-- 文件上传 -->
         <dependency>
             <groupId>org.apache.tomcat.maven</groupId>
             <artifactId>tomcat7-maven-plugin</artifactId>
@@ -190,6 +189,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring-version}</version>
+        </dependency>
+        <!-- web3j -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.5.5</version>
         </dependency>
     </dependencies>
 

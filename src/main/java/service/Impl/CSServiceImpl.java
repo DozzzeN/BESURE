@@ -3,6 +3,7 @@ package service.Impl;
 import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.Provenance;
 import service.CSService;
@@ -13,12 +14,13 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
-import static service.Impl.PServiceImpl.k_rou_y_rou_plus_1;
+import static service.Impl.DServiceImpl.k_rou_y_rou_plus_1;
 import static service.Impl.PServiceImpl.spwP;
 import static service.Impl.SysParamServiceImpl.*;
 
 @Service
 public class CSServiceImpl implements CSService {
+    private final Logger logger = Logger.getLogger(AuditServiceImpl.class);
     @Resource
     private ProvStoreMapper provStoreMapper;
     @Resource
@@ -41,7 +43,7 @@ public class CSServiceImpl implements CSService {
         Element right = pairing.pairing(hash_perD, pkP);
 
         if (!left.isEqual(right)) {
-            System.out.println("Cloud server's verification failed!");
+            logger.warn("Cloud server's verification failed!");
         } else {
             //store PB_l and Bl_l
             int currentStage = consultMapper.selMaxStage(idP);
@@ -62,7 +64,7 @@ public class CSServiceImpl implements CSService {
                     }
                     provStoreMapper.updCk_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(enc_k_rou_y_rou_plus_1));
                 } else {
-                    System.out.println("update PB_l and Bl_l failed!");
+                    logger.warn("update PB_l and Bl_l failed!");
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -78,9 +80,9 @@ public class CSServiceImpl implements CSService {
     @Override
     public void store(String idP, int stage, byte[] ck_rou_y_rou) {
         if (provStoreMapper.updCk_rou_y_rou(idP, stage, Base64.getEncoder().encodeToString(ck_rou_y_rou)) > 0) {
-            System.out.println("update ck_rou_y_rou succeeded!");
+            logger.warn("update ck_rou_y_rou succeeded!");
         } else {
-            System.out.println("update ck_rou_y_rou failed!");
+            logger.warn("update ck_rou_y_rou failed!");
         }
     }
 }

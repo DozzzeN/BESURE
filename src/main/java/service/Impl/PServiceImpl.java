@@ -4,6 +4,7 @@ import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
 import mapper.RegistrationMapper;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.EHR;
 import service.DService;
@@ -31,9 +32,10 @@ public class PServiceImpl implements PService {
     public static byte[] pidD;
     public static String aux;
     public static byte[] ck_rou_y_rou;
-    public static Element k_rou_y_rou_plus_1;
+//    public static Element k_rou_y_rou_plus_1;
     private static Element r;
     private static String tpD;
+    private final Logger logger = Logger.getLogger(AuditServiceImpl.class);
     @Resource
     private RegistrationMapper registrationMapper;
     private Element tk;
@@ -62,7 +64,7 @@ public class PServiceImpl implements PService {
             Element left = pairing.pairing(sigma_star[i], P).getImmutable();
             Element right = pairing.pairing(pwP_star, Qs[i]).getImmutable();
             if (!left.isEqual(right)) {
-                System.out.println("Eq.2 does not hold");
+                logger.warn("Eq.2 does not hold");
             }
         }
 
@@ -94,7 +96,7 @@ public class PServiceImpl implements PService {
         Element r = pairing.pairing(pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length), Q.duplicate()).getImmutable();
         Element l = pairing.pairing(sigma_pw.duplicate(), P.duplicate()).getImmutable();
         if (!l.isEqual(r)) {
-            System.out.println("Eq.3 does not hold");
+            logger.warn("Eq.3 does not hold");
         } else {
             try {
                 byte[] b = ArraysUtil.mergeByte(sigma_pw.toBytes(), pwP.getBytes("ISO8859-1"));
@@ -156,7 +158,7 @@ public class PServiceImpl implements PService {
             String auCS = consultMapper.selAuCS(idP);
             if (!auCS_prime.isEqual(
                     pairing.getZr().newElementFromBytes(auCS.getBytes("ISO8859-1")))) {
-                System.out.println("failed to authenticate with CS!");
+                logger.warn("failed to authenticate with CS!");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -174,20 +176,20 @@ public class PServiceImpl implements PService {
         dServiceImpl.appoint_D(enc_perD_sigma_perD, perD.length, sigma_perD.toBytes().length);
 
         //share DH-key
-        a = pairing.getZr().newRandomElement().getImmutable();
-        Element aP = P.duplicate().mulZn(a.duplicate()).getImmutable();
-        Element bP = dServiceImpl.consult_D(aP);
-        k_rou_y_rou_plus_1 = bP.duplicate().mulZn(a.duplicate()).getImmutable();
+        dServiceImpl.consult_D();
+//        a = pairing.getZr().newRandomElement().getImmutable();
+//        Element aP = P.duplicate().mulZn(a.duplicate()).getImmutable();
+//        k_rou_y_rou_plus_1 = bP.duplicate().mulZn(a.duplicate()).getImmutable();
 
         //download enc_k_rou_y_rou and obtain k_rou_y_rou
         int maxStage = consultMapper.selMaxStage(idP);
-        System.out.println("isTheFirstTime:" + (maxStage == 0));
+        logger.warn("isTheFirstTime:" + (maxStage == 0));
         if (!(maxStage == 0)) {
             byte[] enc_k_rou_y_rou_plus_1 = Base64.getDecoder().decode(provStoreMapper.selCk_rou_y_rouByStage(idP, maxStage));
             byte[] k_rou_y_rou_plus_1 = CryptoUtil.AESDecrypt(CryptoUtil.getHash(
                     "SHA-256", spwP), enc_k_rou_y_rou_plus_1);
             return sendCk_rou_y_rouToD(idP, maxStage, CryptoUtil.AESEncrypt(CryptoUtil.getHash(
-                    "SHA-256", PServiceImpl.k_rou_y_rou_plus_1), k_rou_y_rou_plus_1));
+                    "SHA-256", DServiceImpl.k_rou_y_rou_plus_1), k_rou_y_rou_plus_1));
         }
         return null;
     }
@@ -202,28 +204,19 @@ public class PServiceImpl implements PService {
         this.idP = idP;
         byte[] idH_spwP = ArraysUtil.mergeByte(SysParamServiceImpl.idH.getBytes(), spwP.toBytes());
         Element auH = pairing.getZr().newElement().setFromHash(idH_spwP, 0, idH_spwP.length).getImmutable();
-        if (hServiceImpl.authenticate(idP, auH)) {
-            return appoint_P();
-        }
-        return 0;
+        return hServiceImpl.authenticate(idP, auH);
     }
 
-    public int appoint_P() {
-        tk = pairing.getG1().newRandomElement().getImmutable();
-        Element[] encTK = CryptoUtil.ElGamalEncrypt(P, pkH, tk.duplicate());
-        //send encTK to H
-        return hServiceImpl.appoint_H(encTK, idP);
-    }
-
-    public int sendAppointInfoToPatient(int idDLength, int tpDLength) {
+    public int sendAppointInfoToPatient(int idDLength, int tpDLength, int tkLength) {
         //decrypt and parse the appointment information
-        byte[] idD_tpD = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", tk.duplicate()), pidD);
-        byte[][] splitByte = ArraysUtil.splitByte(idD_tpD, idDLength, tpDLength);
+        byte[] idD_tpD_tk = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", auH.duplicate()), pidD);
+        byte[][] splitByte = ArraysUtil.splitByte(idD_tpD_tk, idDLength, tpDLength, tkLength);
         byte[] idD = splitByte[0];
         tpD = new String(splitByte[1]);
-        System.out.println("医生身份为" + new String(idD));
-        System.out.println("有效期为" + Long.valueOf(tpD));
-        System.out.println("辅助信息为" + aux);
+        this.tk = pairing.getG1().newElementFromBytes(splitByte[2]);
+        logger.warn("医生身份为" + new String(idD));
+        logger.warn("有效期为" + Long.valueOf(tpD));
+        logger.warn("辅助信息为" + aux);
         return 1;
     }
 }

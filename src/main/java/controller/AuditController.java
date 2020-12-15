@@ -1,10 +1,11 @@
 package controller;
 
+import contract.DeployUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import pojo.DO.User;
 import pojo.VO.AuditResult;
 import service.AuditService;
@@ -39,17 +40,21 @@ public class AuditController {
 
     @RequestMapping("audit")
     @ResponseBody
-    AuditResult audit(@RequestParam("result") String result, HttpServletRequest req) {
+    AuditResult audit(HttpServletRequest req) {
         //清除session
         User user = (User) req.getSession().getAttribute("user");
         logger.warn("审计者" + user.getUname() + "开始审计文件");
         String idP = user.getUname();
         //http将Base64编码中的+转为空格
-        result = result.replace(" ", "+");
+
+        TransactionReceipt provTx = DeployUtil.getProv(1);
+        System.out.println("provTx has received " + DeployUtil.getConfirmedNumber(provTx));
+
+        String content = DeployUtil.contract.getContentEvents(provTx).get(0)._content;
 
         byte[] txContent = null;
         try {
-            txContent = Base64.getDecoder().decode(result.getBytes("ISO8859-1"));
+            txContent = Base64.getDecoder().decode(content.getBytes("ISO8859-1"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -59,7 +64,7 @@ public class AuditController {
         auditResult.setCheckSig(auditServiceImpl.checkSig(idP));
         auditResult.setCheckHash(auditServiceImpl.checkHash(idP, txContent));
 
-        System.out.println(auditResult);
+        logger.warn(auditResult);
         return auditResult;
     }
 }

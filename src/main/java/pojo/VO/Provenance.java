@@ -12,7 +12,7 @@ public class Provenance implements Serializable {
     public String idP;
     public String HName;//
     public String HID;//
-    public String block;//TODO 上一个溯源记录的区块哈希
+//    public String block;//TODO 上一个溯源记录的区块哈希
     public long startCreateTime;
     public long endCreateTime;
     public long startViewTime;//TODO
@@ -30,7 +30,7 @@ public class Provenance implements Serializable {
                 ", idP='" + idP + '\'' +
                 ", HName='" + HName + '\'' +
                 ", HID='" + HID + '\'' +
-                ", block='" + block + '\'' +
+//                ", block='" + block + '\'' +
                 ", startCreateTime=" + startCreateTime +
                 ", endCreateTime=" + endCreateTime +
                 ", startViewTime=" + startViewTime +
@@ -103,13 +103,13 @@ public class Provenance implements Serializable {
         this.HID = HID;
     }
 
-    public String getBlock() {
-        return block;
-    }
-
-    public void setBlock(String block) {
-        this.block = block;
-    }
+//    public String getBlock() {
+//        return block;
+//    }
+//
+//    public void setBlock(String block) {
+//        this.block = block;
+//    }
 
     public long getStartCreateTime() {
         return startCreateTime;

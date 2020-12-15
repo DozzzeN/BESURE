@@ -33,6 +33,7 @@ public class SysParamServiceImpl implements SysParamService {
     public static Pairing pairing;
 
     public static String[] idKS = new String[]{"ks1", "ks2", "ks3", "ks4", "ks5"};
+    //    public static String[] idKS;
     public static String idCS = "cs";
     public static String idH = "h";
 
@@ -41,6 +42,20 @@ public class SysParamServiceImpl implements SysParamService {
      */
     @Override
     public void init() {
+        //SSP - Super-singular Curve over GF(p) (512-bit modulus p, k=2)
+//        TypeACurveGenerator pg = new TypeACurveGenerator(512, 512);
+//        PairingParameters typeAParams = pg.generate();
+//        Pairing pairing = PairingFactory.getPairing(typeAParams);
+//        System.out.println(pairing.getG1().getOrder());
+//        CurveElement e = (CurveElement) pairing.getG1().newRandomElement();
+//        BigInteger x = e.getX().toBigInteger();
+//        BigInteger y = e.getY().toBigInteger();
+//        System.out.println(e.getField().getA());
+//        System.out.println(e.getField().getB());
+//        BigInteger p = pairing.getG1().getOrder();
+//        System.out.println(x.pow(3).add(x).mod(p));
+//        System.out.println(y.pow(2).mod(p));
+
         Logger logger = Logger.getLogger(SysParamServiceImpl.class);
 
         TypeACurveGenerator pg = new TypeACurveGenerator(512, 512);

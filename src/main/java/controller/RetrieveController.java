@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class RetrieveController {
@@ -16,7 +15,7 @@ public class RetrieveController {
 
     @RequestMapping("retrieve")
     @ResponseBody
-    public Object retrieve(@RequestParam("operate") String operate, HttpServletRequest req) {
+    public Object retrieve(@RequestParam("operate") String operate) {
         //省略service
         if ("block".equals(operate)) {//检索所有区块数据
             return provenanceMapper.selAllBlock();

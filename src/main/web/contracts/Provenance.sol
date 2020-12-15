@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.8.0;
 
 contract Provenance {
     // 溯源记录结构
@@ -8,6 +8,8 @@ contract Provenance {
         address operator; // 操作者
         string content; // 溯源记录内容
     }
+
+    event Content(string _content);
 
     mapping(uint256 => mapping(uint256 => Prov)) public proves; // 所有溯源记录（ID-阶段编号-文件结构）
     mapping(uint256 => uint256) public index; // idP的记录个数
@@ -28,8 +30,9 @@ contract Provenance {
 
     function getProv(
         uint256 _idP
-    ) public view
-    returns (string _content) {
+    ) public
+    returns (string memory _content) {
         _content = proves[_idP][index[_idP] - 1].content;
+        emit Content(_content);
     }
 }

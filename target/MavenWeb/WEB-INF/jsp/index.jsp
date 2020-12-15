@@ -33,10 +33,6 @@
     if (user == null) {
         response.sendRedirect("login");
     }
-    String role = (String) userSession.getAttribute("role");
-    if (!role.equals("owner")) {
-        response.sendRedirect("login");
-    }
 %>
 <!-- 页眉部分 -->
 <div class="container-fluid navbar-fixed-top">
@@ -53,19 +49,6 @@
             <table class='table1'>
                 <tr>
                     <td><fmt:message key="welcome"/></td>
-                </tr>
-                <tr>
-                    <!-- 用户角色 -->
-                    <td id="user_role">
-                        <c:choose>
-                            <c:when test="${user.role == 'creator'}">
-                                <fmt:message key="creator"/>
-                            </c:when>
-                            <c:when test="${user.role == 'auditor'}">
-                                <fmt:message key="auditor"/>
-                            </c:when>
-                        </c:choose>
-                    </td>
                 </tr>
                 <tr>
                     <!-- 用户名 -->
@@ -315,11 +298,7 @@
 
 
 <script type='text/javascript'>
-    var jsonAddress = "../../BESURE/build/contracts/Provenance.json";
-    var web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
     $(document).ready(function () {
-        var CONTRACT_ADDRESS = "${contract}";
-
         //委派
         $("#appointBtn").click(function () {
             $.ajax({
@@ -361,54 +340,14 @@
             $.ajax({
                 url: "provStore",
                 type: "post",
-                success: function (txContent) {
+                success: function (code) {
                     //不要写成code === 1
-                    if (txContent != "") {
-                        alert("<fmt:message key="provStoreSucceeded"/>");
-                        $.getJSON(jsonAddress, function (data) {
-                            //创建合约
-                            var Provenance = web3js.eth.contract(data.abi).at(CONTRACT_ADDRESS);
-                            var param = { //扣取gas的账户地址
-                                from: web3js.eth.accounts[0],
-                                gas: 3000000 //不限制gas值会产生out of gas的错误
-                            };
-                            //调用合约函数
-                            var blockHash;
-                            Provenance.Create("${user.uname}", txContent, param, function (error, result) {
-                                if (!error) {
-                                    alert("<fmt:message key="createSuccess"/>");
-                                    console.log("txHash" + result);
-                                    web3js.eth.getTransaction(result, function (error, tempResult) {
-                                        if (!error) {
-                                            blockHash = tempResult.blockHash;
-                                            console.log("myBlockHash" + blockHash);
-                                            $.ajax({
-                                                url: "afterProvStore?blockHash=" + blockHash,
-                                                type: "post",
-                                                async: false,
-                                                success: function (code) {
-                                                    if (code == 1) {
-                                                        alert("<fmt:message key="databaseSuccess"/>");
-                                                    } else {
-                                                        alert("<fmt:message key="databaseFail"/>");
-                                                    }
-                                                    location.reload(true);
-                                                }
-                                            });
-                                        } else {
-                                            console.error(error);
-                                        }
-                                    });
-                                } else {
-                                    alert("<fmt:message key="createFail"/>");
-                                    //打印详细出错信息
-                                    console.log(error);
-                                }
-                            });
-                        });
+                    if (code == 1) {
+                        alert("<fmt:message key="databaseSuccess"/>");
                     } else {
-                        alert("<fmt:message key="provStoreFailed"/>");
+                        alert("<fmt:message key="databaseFail"/>");
                     }
+                    location.reload(true);
                 },
                 error: function (XMLResponse) {
                     alert("<fmt:message key="error"/>" + XMLResponse.responseText);
@@ -418,49 +357,31 @@
 
         //审计
         $("#auditBtn").click(function () {
-            $.getJSON(jsonAddress, function (data) {
-                //创建合约
-                var Provenance = web3js.eth.contract(data.abi).at(CONTRACT_ADDRESS);
-                var param = { //扣取gas的账户地址
-                    from: web3js.eth.accounts[0],
-                    gas: 3000000 //不限制gas值会产生out of gas的错误
-                };
-                //调用合约函数，但没有产生交易
-                Provenance.getProv("${user.uname}", param, function (error, result) {
-                    if (!error) {
-                        console.log(result);
-                        $.ajax({
-                            url: "audit?result=" + result,
-                            type: "get",
-                            dataType: "json",
-                            success: function (auditResult) {
-                                // alert(auditResult.checkPn);
-                                // alert(auditResult.checkSig);
-                                // alert(auditResult.checkHash);
-                                var x = document.getElementById("auditReview").insertRow(1);
-                                var c0 = x.insertCell(0);
-                                var c1 = x.insertCell(1);
-                                var c2 = x.insertCell(2);
-                                c0.innerHTML = auditResult.checkPn;
-                                c1.innerHTML = auditResult.checkSig;
-                                c2.innerHTML = auditResult.checkHash;
-                                c0.style.cssText = 'word-wrap: break-word; word-break: break-all;';
-                                c1.style.cssText = 'word-wrap: break-word; word-break: break-all;';
-                                c2.style.cssText = 'word-wrap: break-word; word-break: break-all;';
-                                $('#auditModal').modal({backdrop: 'static', keyboard: false});
-                            },
-                            error: function (XMLResponse) {
-                                alert("<fmt:message key="error"/>" + XMLResponse.responseText);
-                            }
-                        });
-                    } else {
-                        alert("<fmt:message key="createFail"/>");
-                        //打印详细出错信息
-                        console.log(error);
-                    }
-                });
+            $.ajax({
+                url: "audit",
+                type: "post",
+                dataType: "json",
+                success: function (auditResult) {
+                    // alert(auditResult.checkPn);
+                    // alert(auditResult.checkSig);
+                    // alert(auditResult.checkHash);
+                    var x = document.getElementById("auditReview").insertRow(1);
+                    var c0 = x.insertCell(0);
+                    var c1 = x.insertCell(1);
+                    var c2 = x.insertCell(2);
+                    c0.innerHTML = auditResult.checkPn;
+                    c1.innerHTML = auditResult.checkSig;
+                    c2.innerHTML = auditResult.checkHash;
+                    c0.style.cssText = 'word-wrap: break-word; word-break: break-all;';
+                    c1.style.cssText = 'word-wrap: break-word; word-break: break-all;';
+                    c2.style.cssText = 'word-wrap: break-word; word-break: break-all;';
+                    $('#auditModal').modal({backdrop: 'static', keyboard: false});
+                },
+                error: function (XMLResponse) {
+                    alert("<fmt:message key="error"/>" + XMLResponse.responseText);
+                }
             });
-        });
+        })
     })
 
     $(".navbar-fixed-top").headroom();
@@ -472,8 +393,8 @@
         <%
             String code = request.getParameter("code");
             String locale = session.getAttribute("locale").toString();
-                  System.out.println(code);
-                  System.out.println(session.getAttribute("locale"));
+//                  System.out.println(code);
+//                  System.out.println(session.getAttribute("locale"));
                   if (!("en".equals(code)&&"en_US".equals(locale))||
                   !("zh".equals(code)&&"zh_CN".equals(locale))){
                       if ("en".equals(code)) {
@@ -484,8 +405,8 @@
                   } else{
                       session.setAttribute("locale", new Locale("en", "US"));
                   }
-                  System.out.println(code);
-                  System.out.println(session.getAttribute("locale"));
+//                  System.out.println(code);
+//                  System.out.println(session.getAttribute("locale"));
         %>
         if (location.href.indexOf('#reloaded') == -1) {
             location.href = location.href + "?code=" + language + "#reloaded";

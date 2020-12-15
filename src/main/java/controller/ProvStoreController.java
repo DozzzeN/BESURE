@@ -1,8 +1,9 @@
 package controller;
 
+import contract.DeployUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import pojo.DO.User;
 import service.DService;
 
@@ -17,7 +18,6 @@ public class ProvStoreController {
     private DService dServiceImpl;
 
     @RequestMapping("provStore")
-    @ResponseBody
     public String provStore(HttpServletRequest req) {
         String idP = ((User) req.getSession().getAttribute("user")).getUname();
         byte[] txContent = dServiceImpl.outsource(idP);
@@ -28,14 +28,12 @@ public class ProvStoreController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return txContentStr;
-    }
 
-    @RequestMapping("afterProvStore")
-    public String afterProvStore(HttpServletRequest req) {
-        String idP = ((User) req.getSession().getAttribute("user")).getUname();
-        String blockHash = req.getParameter("blockHash");
-        dServiceImpl.sendBlockHash(idP, blockHash);
+        TransactionReceipt createTx = DeployUtil.Create(Integer.parseInt(idP), txContentStr);
+
+        System.out.println("createTx has received " + DeployUtil.getConfirmedNumber(createTx));
+
+        dServiceImpl.sendBlockHash(idP, createTx.getBlockHash());
         return "forward:code?code=1";
     }
 }

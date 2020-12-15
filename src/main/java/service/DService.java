@@ -9,7 +9,7 @@ public interface DService {
 
     void appoint_D(byte[] enc_perD_sigma_perD, int length, int length1);
 
-    Element consult_D(Element aP);
+    void consult_D();
 
     boolean authenticate(byte[] perD, byte[] sig_perD);
 

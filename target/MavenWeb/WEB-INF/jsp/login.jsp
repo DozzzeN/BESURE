@@ -72,10 +72,6 @@
                         if (code == 1) {
                             alert("<fmt:message key="loginSucceeded"/>");
                             location.href = "index";
-                        } else if (code == 2) {
-                            alert("<fmt:message key="loginSucceeded"/>");
-                            //防止与requestmapping重名
-                            location.href = "auditPage";
                         } else {
                             alert("<fmt:message key="loginFailed"/>");
                         }
@@ -91,7 +87,7 @@
         });
 
         <%
-            System.out.println(session.getAttribute("locale"));
+//            System.out.println(session.getAttribute("locale"));
             if (session.getAttribute("locale") == null) {
                     session.setAttribute("locale", new Locale("en", "US"));
             }

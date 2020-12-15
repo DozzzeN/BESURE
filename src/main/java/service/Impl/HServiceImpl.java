@@ -2,6 +2,7 @@ package service.Impl;
 
 import it.unisa.dia.gas.jpbc.Element;
 import mapper.AppointMapper;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.Doctor;
 import service.DService;
@@ -13,6 +14,8 @@ import util.CryptoUtil;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 
+import static service.Impl.SysParamServiceImpl.pairing;
+
 @Service
 public class HServiceImpl implements HService {
     @Resource
@@ -21,37 +24,46 @@ public class HServiceImpl implements HService {
     private DService dServiceImpl;
     @Resource
     private AppointMapper appointMapper;
+    private final Logger logger = Logger.getLogger(HServiceImpl.class);
+    private Element auH;
 
     @Override
-    public boolean authenticate(String idP, Element auH) {
+    public int authenticate(String idP, Element auH) {
         try {
             if (appointMapper.selIdP(idP, new String(auH.toBytes(), "ISO8859-1")) > 0) {
-                return true;
+                //choose a treatment key
+                Element tk = pairing.getG1().newRandomElement().getImmutable();
+                this.auH = auH;
+//                Element[] encTK = CryptoUtil.ElGamalEncrypt(P, pkH, tk.duplicate());
+                //send encTK to H
+                return appoint_H(tk, idP);
             } else {
-                System.out.println("failed to authenticated with H!");
-                return false;
+                logger.warn("failed to authenticated with H!");
+                return -1;
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return false;
+        return -1;
     }
 
     @Override
-    public int appoint_H(Element[] encTK, String ID_P) {
-        Element tk = CryptoUtil.ElGamalDecrypt(SysParamServiceImpl.skH, encTK).getImmutable();//解密获取tk
+    public int appoint_H(Element tk, String ID_P) {
+//        Element tk = CryptoUtil.ElGamalDecrypt(SysParamServiceImpl.skH, encTK).getImmutable();//解密获取tk
         Doctor doctor = new Doctor("doctor");//委派医生
         long tpD = System.currentTimeMillis();//当前时间
         byte[] idD_tpD = ArraysUtil.mergeByte(doctor.getID().getBytes(), Long.toString(tpD).getBytes());
-        byte[] pidD = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", tk.duplicate()), idD_tpD);//医生的伪身份
+        byte[] idD_tpD_tk = ArraysUtil.mergeByte(idD_tpD, tk.duplicate().toBytes());
+        byte[] pidD = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", tk.duplicate()), idD_tpD_tk);
+        byte[] pidDToP = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", auH.duplicate()), idD_tpD_tk);//医生的伪身份
 
         //send tk pidD to D
         dServiceImpl.sendTKPIDDToDoctor(tk.duplicate(), pidD);
 
         //send appointment information to P
-        PServiceImpl.pidD = pidD;
+        PServiceImpl.pidD = pidDToP;
         PServiceImpl.aux = "dep";
-        return pServiceImpl.sendAppointInfoToPatient(doctor.getID().getBytes().length, Long.toString(tpD).getBytes().length);
+        return pServiceImpl.sendAppointInfoToPatient(doctor.getID().getBytes().length, Long.toString(tpD).getBytes().length, tk.duplicate().toBytes().length);
     }
 
     @Override
