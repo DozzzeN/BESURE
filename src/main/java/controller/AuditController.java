@@ -59,7 +59,7 @@ public class AuditController {
         auditResult.setCheckSig(auditServiceImpl.checkSig(idP));
         auditResult.setCheckHash(auditServiceImpl.checkHash(idP, txContent));
 
-        System.out.println(auditResult);
+        logger.warn(auditResult);
         return auditResult;
     }
 }

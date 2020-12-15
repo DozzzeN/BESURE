@@ -455,8 +455,8 @@
         <%
             String code = request.getParameter("code");
             String locale = session.getAttribute("locale").toString();
-                  System.out.println(code);
-                  System.out.println(session.getAttribute("locale"));
+//                  System.out.println(code);
+//                  System.out.println(session.getAttribute("locale"));
                   if (!("en".equals(code)&&"en_US".equals(locale))||
                   !("zh".equals(code)&&"zh_CN".equals(locale))){
                       if ("en".equals(code)) {
@@ -467,8 +467,8 @@
                   } else{
                       session.setAttribute("locale", new Locale("en", "US"));
                   }
-                  System.out.println(code);
-                  System.out.println(session.getAttribute("locale"));
+//                  System.out.println(code);
+//                  System.out.println(session.getAttribute("locale"));
         %>
         if (location.href.indexOf('#reloaded') == -1) {
             location.href = location.href + "?code=" + language + "#reloaded";

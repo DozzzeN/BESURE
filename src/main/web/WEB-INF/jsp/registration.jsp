@@ -86,7 +86,7 @@
         });
 
         <%
-            System.out.println(session.getAttribute("locale"));
+//            System.out.println(session.getAttribute("locale"));
             if (session.getAttribute("locale") == null) {
                     session.setAttribute("locale", new Locale("en", "US"));
             }

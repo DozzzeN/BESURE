@@ -59,19 +59,6 @@
                     <td><fmt:message key="welcome"/></td>
                 </tr>
                 <tr>
-                    <!-- 用户角色 -->
-                    <td id="user_role">
-                        <c:choose>
-                            <c:when test="${user.role == 'creator'}">
-                                <fmt:message key="creator"/>
-                            </c:when>
-                            <c:when test="${user.role == 'auditor'}">
-                                <fmt:message key="auditor"/>
-                            </c:when>
-                        </c:choose>
-                    </td>
-                </tr>
-                <tr>
                     <!-- 用户名 -->
                     <td id="user_name">${user.uname}</td>
                 </tr>
@@ -189,14 +176,7 @@
     $(".navbar-fixed-top").headroom();
 
     function home() {
-        <c:choose>
-        <c:when test="${user.role == 'creator'}">
         location.href = "index";
-        </c:when>
-        <c:when test="${user.role == 'auditor'}">
-        location.href = "auditPage";
-        </c:when>
-        </c:choose>
     }
 
     function onLoad() {

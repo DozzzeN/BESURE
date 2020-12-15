@@ -1,5 +1,6 @@
 package controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ConsultController {
+    private final Logger logger = Logger.getLogger(ConsultController.class);
     @Resource
     private PService pServiceImpl;
     @Resource
@@ -26,7 +28,7 @@ public class ConsultController {
 
         //return ehrList for doctor's view
         EHR ehr = pServiceImpl.consult_P(user.getUname(), user.getPassword());
-        System.out.println(ehr);
+        logger.warn(ehr);
         return ehr;
     }
 
@@ -36,7 +38,7 @@ public class ConsultController {
 
         dServiceImpl.createEHR(user.getUname(), ehr);
 
-        System.out.println(ehr);
+        logger.warn(ehr);
         return "forward:code?code=1";
     }
 }

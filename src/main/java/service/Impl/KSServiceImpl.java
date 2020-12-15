@@ -1,6 +1,7 @@
 package service.Impl;
 
 import it.unisa.dia.gas.jpbc.Element;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import service.KSService;
 
@@ -12,6 +13,7 @@ import static service.Impl.SysParamServiceImpl.pairing;
 
 @Service
 public class KSServiceImpl implements KSService {
+    private final Logger logger = Logger.getLogger(KSServiceImpl.class);
     public static int n = 5;
     public static int t = 3;
     public static Element[] Qs;
@@ -70,7 +72,7 @@ public class KSServiceImpl implements KSService {
                 Element tempp = P.duplicate().mulZn(temp).getImmutable();
                 if (right != left) {
                     checkResult = false;
-                    System.out.println("Eq.1 does not hold");
+                    logger.warn("Eq.1 does not hold");
                     break;
                 }
             }

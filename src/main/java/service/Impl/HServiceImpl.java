@@ -2,6 +2,7 @@ package service.Impl;
 
 import it.unisa.dia.gas.jpbc.Element;
 import mapper.AppointMapper;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.Doctor;
 import service.DService;
@@ -21,6 +22,7 @@ public class HServiceImpl implements HService {
     private DService dServiceImpl;
     @Resource
     private AppointMapper appointMapper;
+    private final Logger logger = Logger.getLogger(HServiceImpl.class);
 
     @Override
     public boolean authenticate(String idP, Element auH) {
@@ -28,7 +30,7 @@ public class HServiceImpl implements HService {
             if (appointMapper.selIdP(idP, new String(auH.toBytes(), "ISO8859-1")) > 0) {
                 return true;
             } else {
-                System.out.println("failed to authenticated with H!");
+                logger.warn("failed to authenticated with H!");
                 return false;
             }
         } catch (UnsupportedEncodingException e) {

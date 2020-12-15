@@ -139,47 +139,47 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-        <!-- jpbc -->
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>bcprov-jdk</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jna</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jpbc-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jpbc-benchmark</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jpbc-crypto</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jpbc-mm</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jpbc-plaf</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyc</groupId>
-            <artifactId>jpbc-pbc</artifactId>
-            <version>1.0</version>
-        </dependency>
+        <!--        &lt;!&ndash; jpbc &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>bcprov-jdk</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jna</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jpbc-api</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jpbc-benchmark</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jpbc-crypto</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jpbc-mm</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jpbc-plaf</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.dyc</groupId>-->
+        <!--            <artifactId>jpbc-pbc</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
         <!-- 文件上传 -->
         <dependency>
             <groupId>org.apache.tomcat.maven</groupId>

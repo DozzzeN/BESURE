@@ -4,6 +4,7 @@ import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
 import mapper.RegistrationMapper;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.EHR;
 import service.DService;
@@ -34,6 +35,7 @@ public class PServiceImpl implements PService {
     public static Element k_rou_y_rou_plus_1;
     private static Element r;
     private static String tpD;
+    private final Logger logger = Logger.getLogger(AuditServiceImpl.class);
     @Resource
     private RegistrationMapper registrationMapper;
     private Element tk;
@@ -62,7 +64,7 @@ public class PServiceImpl implements PService {
             Element left = pairing.pairing(sigma_star[i], P).getImmutable();
             Element right = pairing.pairing(pwP_star, Qs[i]).getImmutable();
             if (!left.isEqual(right)) {
-                System.out.println("Eq.2 does not hold");
+                logger.warn("Eq.2 does not hold");
             }
         }
 
@@ -94,7 +96,7 @@ public class PServiceImpl implements PService {
         Element r = pairing.pairing(pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length), Q.duplicate()).getImmutable();
         Element l = pairing.pairing(sigma_pw.duplicate(), P.duplicate()).getImmutable();
         if (!l.isEqual(r)) {
-            System.out.println("Eq.3 does not hold");
+            logger.warn("Eq.3 does not hold");
         } else {
             try {
                 byte[] b = ArraysUtil.mergeByte(sigma_pw.toBytes(), pwP.getBytes("ISO8859-1"));
@@ -156,7 +158,7 @@ public class PServiceImpl implements PService {
             String auCS = consultMapper.selAuCS(idP);
             if (!auCS_prime.isEqual(
                     pairing.getZr().newElementFromBytes(auCS.getBytes("ISO8859-1")))) {
-                System.out.println("failed to authenticate with CS!");
+                logger.warn("failed to authenticate with CS!");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -181,7 +183,7 @@ public class PServiceImpl implements PService {
 
         //download enc_k_rou_y_rou and obtain k_rou_y_rou
         int maxStage = consultMapper.selMaxStage(idP);
-        System.out.println("isTheFirstTime:" + (maxStage == 0));
+        logger.warn("isTheFirstTime:" + (maxStage == 0));
         if (!(maxStage == 0)) {
             byte[] enc_k_rou_y_rou_plus_1 = Base64.getDecoder().decode(provStoreMapper.selCk_rou_y_rouByStage(idP, maxStage));
             byte[] k_rou_y_rou_plus_1 = CryptoUtil.AESDecrypt(CryptoUtil.getHash(
@@ -221,9 +223,9 @@ public class PServiceImpl implements PService {
         byte[][] splitByte = ArraysUtil.splitByte(idD_tpD, idDLength, tpDLength);
         byte[] idD = splitByte[0];
         tpD = new String(splitByte[1]);
-        System.out.println("医生身份为" + new String(idD));
-        System.out.println("有效期为" + Long.valueOf(tpD));
-        System.out.println("辅助信息为" + aux);
+        logger.warn("医生身份为" + new String(idD));
+        logger.warn("有效期为" + Long.valueOf(tpD));
+        logger.warn("辅助信息为" + aux);
         return 1;
     }
 }

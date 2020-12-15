@@ -32,7 +32,8 @@ public class SysParamServiceImpl implements SysParamService {
 
     public static Pairing pairing;
 
-    public static String[] idKS = new String[]{"ks1", "ks2", "ks3", "ks4", "ks5"};
+    //    public static String[] idKS = new String[]{"ks1", "ks2", "ks3", "ks4", "ks5"};
+    public static String[] idKS;
     public static String idCS = "cs";
     public static String idH = "h";
 

@@ -33,10 +33,6 @@
     if (user == null) {
         response.sendRedirect("login");
     }
-    String role = (String) userSession.getAttribute("role");
-    if (!role.equals("owner")) {
-        response.sendRedirect("login");
-    }
 %>
 <!-- 页眉部分 -->
 <div class="container-fluid navbar-fixed-top">
@@ -53,19 +49,6 @@
             <table class='table1'>
                 <tr>
                     <td><fmt:message key="welcome"/></td>
-                </tr>
-                <tr>
-                    <!-- 用户角色 -->
-                    <td id="user_role">
-                        <c:choose>
-                            <c:when test="${user.role == 'creator'}">
-                                <fmt:message key="creator"/>
-                            </c:when>
-                            <c:when test="${user.role == 'auditor'}">
-                                <fmt:message key="auditor"/>
-                            </c:when>
-                        </c:choose>
-                    </td>
                 </tr>
                 <tr>
                     <!-- 用户名 -->

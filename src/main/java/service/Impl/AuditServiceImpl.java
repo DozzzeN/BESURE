@@ -17,6 +17,7 @@ import static service.Impl.SysParamServiceImpl.*;
 public class AuditServiceImpl implements AuditService {
     private static byte[] sigma_PB_lBytes;
     private static byte[] PB_l;
+
     @Resource
     private ProvStoreMapper provStoreMapper;
     @Resource
