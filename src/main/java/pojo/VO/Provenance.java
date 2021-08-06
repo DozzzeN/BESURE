@@ -12,7 +12,7 @@ public class Provenance implements Serializable {
     public String idP;
     public String HName;//
     public String HID;//
-//    public String block;//TODO 上一个溯源记录的区块哈希
+    //    public String block;//TODO 上一个溯源记录的区块哈希
     public long startCreateTime;
     public long endCreateTime;
     public long startViewTime;//TODO

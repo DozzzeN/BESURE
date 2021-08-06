@@ -4,7 +4,7 @@ import it.unisa.dia.gas.jpbc.Element;
 import mapper.AppointMapper;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-import pojo.VO.Doctor;
+import pojo.DO.Doctor;
 import service.DService;
 import service.HService;
 import service.PService;
@@ -18,13 +18,13 @@ import static service.Impl.SysParamServiceImpl.pairing;
 
 @Service
 public class HServiceImpl implements HService {
+    private final Logger logger = Logger.getLogger(HServiceImpl.class);
     @Resource
     private PService pServiceImpl;
     @Resource
     private DService dServiceImpl;
     @Resource
     private AppointMapper appointMapper;
-    private final Logger logger = Logger.getLogger(HServiceImpl.class);
     private Element auH;
 
     @Override
@@ -62,8 +62,9 @@ public class HServiceImpl implements HService {
 
         //send appointment information to P
         PServiceImpl.pidD = pidDToP;
-        PServiceImpl.aux = "dep";
-        return pServiceImpl.sendAppointInfoToPatient(doctor.getID().getBytes().length, Long.toString(tpD).getBytes().length, tk.duplicate().toBytes().length);
+        PServiceImpl.auxD = "dep";
+        return pServiceImpl.sendAppointInfoToPatient(doctor.getID().getBytes().length,
+                Long.toString(tpD).getBytes().length, tk.duplicate().toBytes().length);
     }
 
     @Override

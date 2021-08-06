@@ -1,4 +1,4 @@
-package pojo.VO;
+package pojo.DO;
 
 import it.unisa.dia.gas.jpbc.Element;
 

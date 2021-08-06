@@ -55,8 +55,8 @@ public class DeployUtil {
         new DeployUtil();
         try {
             contract = Provenance_sol_Provenance.deploy(
-                    web3j, credentials,
-                    new BigInteger("22000000000"), new BigInteger("510000"))
+                            web3j, credentials,
+                            new BigInteger("22000000000"), new BigInteger("510000"))
                     .send();
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class DeployUtil {
         return CONTRACT_ADDRESS.equals(writeResourceFile()) ? CONTRACT_ADDRESS : null;
     }
 
-    public static TransactionReceipt Create(int idP, String content) {
+    public static TransactionReceipt Store(int idP, String content) {
         contract = Provenance_sol_Provenance.load(
                 CONTRACT_ADDRESS, web3j, credentials,
                 new BigInteger("22000000000"), new BigInteger("510000"));
@@ -90,7 +90,7 @@ public class DeployUtil {
         return tx;
     }
 
-    public static TransactionReceipt getProv(int idP) {
+    public static TransactionReceipt Audit(int idP) {
         contract = Provenance_sol_Provenance.load(
                 CONTRACT_ADDRESS, web3j, credentials,
                 new BigInteger("22000000000"), new BigInteger("510000"));

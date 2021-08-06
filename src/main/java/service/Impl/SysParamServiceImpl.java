@@ -17,9 +17,6 @@ import java.math.BigInteger;
 
 @Service
 public class SysParamServiceImpl implements SysParamService {
-    @Resource
-    public ParamsMapper paramsMapper;
-
     public static BigInteger p;//群G和Gt的素数阶
     public static Field G;//群G
     public static Field Gt;//群Gt
@@ -29,13 +26,13 @@ public class SysParamServiceImpl implements SysParamService {
     public static Element pkP;
     public static Element skP;
     public static Element k;//私钥对
-
     public static Pairing pairing;
-
     public static String[] idKS = new String[]{"ks1", "ks2", "ks3", "ks4", "ks5"};
     //    public static String[] idKS;
     public static String idCS = "cs";
     public static String idH = "h";
+    @Resource
+    public ParamsMapper paramsMapper;
 
     /**
      * 如果数据库中有系统参数，取出后直接赋值给本类，否则才需要初始化参数，后写入数据库（同缓存）

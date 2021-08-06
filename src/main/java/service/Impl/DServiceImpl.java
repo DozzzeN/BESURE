@@ -67,8 +67,10 @@ public class DServiceImpl implements DService {
                 logger.warn("update c_rou_y_rou failed!");
             }
         } else {
-            byte[] ck_rou_y_rou = Base64.getDecoder().decode(provStoreMapper.selCk_rou_y_rouByStage(idP, currentStage - 1));
-            byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
+            byte[] ck_rou_y_rou = Base64.getDecoder().decode(
+                    provStoreMapper.selCk_rou_y_rouByStage(idP, currentStage - 1));
+            byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(
+                    CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), ck_rou_y_rou);
             if (!(consultMapper.insC_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(C_rou_y_rou_plus_1),
                     Base64.getEncoder().encodeToString(ck_rou_y_rou_plus_1)) > 0)) {
                 logger.warn("update c_rou_y_rou failed!");
@@ -118,6 +120,8 @@ public class DServiceImpl implements DService {
         PB_l.setHID(ehr.HID);
         PB_l.setStartCreateTime(System.currentTimeMillis());
         PB_l.setEndCreateTime(System.currentTimeMillis());
+
+        //H generates signature sigma_PB_l on PB_l
         Element sigma_PB_l = hServiceImpl.genSig(BytesUtil.toByteArray(PB_l));
         DServiceImpl.sigma_PB_l = sigma_PB_l;
 
@@ -126,6 +130,7 @@ public class DServiceImpl implements DService {
 //            PB_l.setBlock(null);
             PB_l.setStartViewTime(0L);
             PB_l.setEndViewTime(0L);
+            // D ensure signature sigma_PB_l is valid
             if (!sendPBToH(sigma_PB_l, BytesUtil.toByteArray(PB_l))) {
                 logger.warn("signature sigma_PB_l verification failed!");
             }
@@ -133,14 +138,16 @@ public class DServiceImpl implements DService {
             int lastStage = consultMapper.selMaxStage(idP);
             //TODO add view ehr
             PB_l.setViewHash(new ArrayList<>());
-            PB_l.getViewHash().add(
-                    new String(CryptoUtil.getHash("SHA-256", ehr.content.getBytes())));
+            PB_l.getViewHash().add(new String(CryptoUtil.getHash("SHA-256", ehr.content.getBytes())));
 //            PB_l.setBlock(provStoreMapper.selBl_l(idP, lastStage));
             PB_l.setStartViewTime(System.currentTimeMillis());
             PB_l.setEndViewTime(System.currentTimeMillis());
 
+            //H generates signature sigma_PB_l_minus_1 on PB_l_minus_1
             String PB_l_minus_1 = provStoreMapper.selPB_l(idP, lastStage - 1);
             Element sigma_PB_l_minus_1 = hServiceImpl.genSig(PB_l_minus_1.getBytes());
+
+            // D ensure both signature sigma_PB_l_minus_1 and sigma_PB_l are valid
             if (!(sendPBToH(sigma_PB_l_minus_1, PB_l_minus_1.getBytes()))
                     && sendPBToH(sigma_PB_l, BytesUtil.toByteArray(PB_l))) {
                 logger.warn("signature sigma_PB_l verification failed!");

@@ -30,9 +30,9 @@ public class PServiceImpl implements PService {
     public static Element[] au;
     public static Element spwP;
     public static byte[] pidD;
-    public static String aux;
+    public static String auxD;
     public static byte[] ck_rou_y_rou;
-//    public static Element k_rou_y_rou_plus_1;
+    //    public static Element k_rou_y_rou_plus_1;
     private static Element r;
     private static String tpD;
     private final Logger logger = Logger.getLogger(AuditServiceImpl.class);
@@ -89,11 +89,13 @@ public class PServiceImpl implements PService {
 
         Element sigma_pw_temp = subtmp.duplicate().mulZn(r.negate().duplicate()).getImmutable();
 
-        Element sigma_pw = pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length).getImmutable().mulZn(s.duplicate()).getImmutable();
+        Element sigma_pw = pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length)
+                .getImmutable().mulZn(s.duplicate()).getImmutable();
         Element l_temp = pairing.pairing(sigma_pw_temp.duplicate(), P.duplicate()).getImmutable();
 
         //generate spwP
-        Element r = pairing.pairing(pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length), Q.duplicate()).getImmutable();
+        Element r = pairing.pairing(pairing.getG1().newElement().setFromHash(pwP.getBytes(), 0, pwP.getBytes().length)
+                , Q.duplicate()).getImmutable();
         Element l = pairing.pairing(sigma_pw.duplicate(), P.duplicate()).getImmutable();
         if (!l.isEqual(r)) {
             logger.warn("Eq.3 does not hold");
@@ -164,8 +166,8 @@ public class PServiceImpl implements PService {
             e.printStackTrace();
         }
 
-        //generate permit to authenticate D
-        byte[] perD = ArraysUtil.mergeByte(idP.getBytes(), pidD, tpD.getBytes(), aux.getBytes());
+        //generate a permit to authenticate D
+        byte[] perD = ArraysUtil.mergeByte(idP.getBytes(), pidD, tpD.getBytes(), auxD.getBytes());
         Element perDHash = pairing.getG1().newElementFromHash(perD, 0, perD.length);
         Element sigma_perD = perDHash.mulZn(skP);
 
@@ -216,7 +218,7 @@ public class PServiceImpl implements PService {
         this.tk = pairing.getG1().newElementFromBytes(splitByte[2]);
         logger.warn("医生身份为" + new String(idD));
         logger.warn("有效期为" + Long.valueOf(tpD));
-        logger.warn("辅助信息为" + aux);
+        logger.warn("辅助信息为" + auxD);
         return 1;
     }
 }

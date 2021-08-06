@@ -29,7 +29,7 @@ public class ProvStoreController {
             e.printStackTrace();
         }
 
-        TransactionReceipt createTx = DeployUtil.Create(Integer.parseInt(idP), txContentStr);
+        TransactionReceipt createTx = DeployUtil.Store(Integer.parseInt(idP), txContentStr);
 
         System.out.println("createTx has received " + DeployUtil.getConfirmedNumber(createTx));
 

@@ -52,17 +52,19 @@ public class CSServiceImpl implements CSService {
                         new String(BytesUtil.toByteArray(PB_l), "ISO8859-1"), blockHash,
                         new String(sigma_PB_l.toBytes(), "ISO8859-1")) > 0) {
                     byte[] enc_k_rou_y_rou_plus_1 = updateKey();
-                    //还要ck_rou_y_rou_plus_1
+                    //update ck_rou_y_rou_plus_1
                     int lastStage = currentStage - 1;
                     if (lastStage > 0) {
                         byte[] ck_rou_y_rou = Base64.getDecoder().decode(
                                 provStoreMapper.selCk_rou_y_rouByStage(idP, lastStage));
-                        byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(CryptoUtil.getHash("SHA-256", spwP),
-                                ck_rou_y_rou);
-                        byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), k_rou_y_rou);
+                        byte[] k_rou_y_rou = CryptoUtil.AESDecrypt(
+                                CryptoUtil.getHash("SHA-256", spwP), ck_rou_y_rou);
+                        byte[] ck_rou_y_rou_plus_1 = CryptoUtil.AESEncrypt(
+                                CryptoUtil.getHash("SHA-256", k_rou_y_rou_plus_1), k_rou_y_rou);
                         store(idP, currentStage, ck_rou_y_rou_plus_1);
                     }
-                    provStoreMapper.updCk_rou_y_rou(idP, currentStage, Base64.getEncoder().encodeToString(enc_k_rou_y_rou_plus_1));
+                    provStoreMapper.updCk_rou_y_rou(idP, currentStage,
+                            Base64.getEncoder().encodeToString(enc_k_rou_y_rou_plus_1));
                 } else {
                     logger.warn("update PB_l and Bl_l failed!");
                 }

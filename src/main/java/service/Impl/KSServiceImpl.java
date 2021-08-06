@@ -13,7 +13,6 @@ import static service.Impl.SysParamServiceImpl.pairing;
 
 @Service
 public class KSServiceImpl implements KSService {
-    private final Logger logger = Logger.getLogger(KSServiceImpl.class);
     public static int n = 5;
     public static int t = 3;
     public static Element[] Qs;
@@ -21,6 +20,7 @@ public class KSServiceImpl implements KSService {
     public static Element Q;
     public static Element s;
     public static Element[] lambda_star;
+    private final Logger logger = Logger.getLogger(KSServiceImpl.class);
     public Element[][] a;
     public Element[][] aP;
     public Element[][] f;

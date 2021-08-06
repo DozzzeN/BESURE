@@ -22,22 +22,6 @@ public class AuditController {
     @Resource
     private AuditService auditServiceImpl;
 
-//    @RequestMapping("audit")
-//    @ResponseBody
-//    AuditResult audit(HttpServletRequest req) {
-//        //清除session
-//        User user = (User) req.getSession().getAttribute("user");
-//        logger.warn("审计者" + user.getUname() + "开始审计文件");
-//        String idP = req.getParameter("username");
-//
-//        //存放审计结果
-//        AuditResult auditResult = new AuditResult();
-//        auditResult.setCheckPn(true);
-//        auditResult.setCheckSig(auditServiceImpl.checkSig(idP));
-//
-//        return auditResult;
-//    }
-
     @RequestMapping("audit")
     @ResponseBody
     AuditResult audit(HttpServletRequest req) {
@@ -47,7 +31,7 @@ public class AuditController {
         String idP = user.getUname();
         //http将Base64编码中的+转为空格
 
-        TransactionReceipt provTx = DeployUtil.getProv(1);
+        TransactionReceipt provTx = DeployUtil.Audit(1);
         System.out.println("provTx has received " + DeployUtil.getConfirmedNumber(provTx));
 
         String content = DeployUtil.contract.getContentEvents(provTx).get(0)._content;

@@ -54,7 +54,7 @@ public class DeployUtilTest {
     public void testGetPath() throws Exception {
         System.out.println(new DeployUtil().getPath(new StringBuilder("/D:/java/IdeaProjects/BESURE/web/WEB-INF/")));
         assertThat(new DeployUtil().getPath(
-                new StringBuilder("/D:/java/IdeaProjects/BESURE/web/WEB-INF/classes/")),
+                        new StringBuilder("/D:/java/IdeaProjects/BESURE/web/WEB-INF/classes/")),
                 is("D:/java/IdeaProjects/BESURE/web/")
         );
     }

@@ -38,9 +38,10 @@ public class RegistrationController {
         Element[] sigma_star = ksServiceImpl.genSpw(pwP_star);
         Element spwP = pServiceImpl.getSpw(sigma_star, pwP_star, KSServiceImpl.Qs, pwP);
 
-        pServiceImpl.register_P(spwP, SysParamServiceImpl.idKS, SysParamServiceImpl.idCS, SysParamServiceImpl.idH, idP, pwP_star);
+        pServiceImpl.register_P(spwP, SysParamServiceImpl.idKS, SysParamServiceImpl.idCS,
+                SysParamServiceImpl.idH, idP, pwP_star);
 
-        //save user information so as to login
+        //save user information to login
         authenticationServerServiceImpl.createUser(idP, pwP);
 
         return "forward:/code?code=1";
