@@ -1,9 +1,14 @@
 import contract.DeployUtil;
 import it.unisa.dia.gas.jpbc.Element;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import pojo.DO.User;
 import pojo.VO.AuditResult;
 import pojo.VO.EHR;
@@ -12,6 +17,8 @@ import service.Impl.KSServiceImpl;
 import service.Impl.SysParamServiceImpl;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
@@ -42,65 +49,65 @@ public class TestAll {
     public void testAll() {
         System.out.println(DeployUtil.deploy());
 
-        long time1 = System.currentTimeMillis();
-        while (DeployUtil.getConfirmedNumber(DeployUtil.contract.getTransactionReceipt().get()) <= 12) {
+//        long time1 = System.currentTimeMillis();
+//        while (DeployUtil.getConfirmedNumber(DeployUtil.contract.getTransactionReceipt().get()) <= 12) {
+//
+//        }
+//        long time2 = System.currentTimeMillis();
+//
+//        System.out.println(time2 - time1);
 
+        DeployUtil.Store(1, "1111111111111");
+        DeployUtil.Audit(1);
+
+        String test = "1";
+        SysParamServiceImpl.idKS = new String[100];
+        for (int i = 0; i < SysParamServiceImpl.idKS.length; i++) {
+            SysParamServiceImpl.idKS[i] = "ks" + i;
         }
-        long time2 = System.currentTimeMillis();
 
-        System.out.println(time2 - time1);
+        EHR ehr = new EHR();
+        ehr.setIdP(test);
+        ehr.setIdD(test);
+        ehr.setHName(test);
+        ehr.setHID(test);
+        ehr.setDepID(test);
+        ehr.setDepName(test);
+        ehr.setContent(test);
 
-//        DeployUtil.Create(1, "1111111111111");
-//        DeployUtil.getProv(1);
+        testRegistration(test, test);
+        testLogin(test, test);
+        testAppoint(test);
+        testConsult(test, test, ehr);
+        String result = testProvStore(test);
+        testAudit(test, result);
 
-//        String test = "1";
-//        SysParamServiceImpl.idKS = new String[100];
-//        for (int i = 0; i < SysParamServiceImpl.idKS.length; i++) {
-//            SysParamServiceImpl.idKS[i] = "ks" + i;
-//        }
-//
-//        EHR ehr = new EHR();
-//        ehr.setIdP(test);
-//        ehr.setIdD(test);
-//        ehr.setHName(test);
-//        ehr.setHID(test);
-//        ehr.setDepID(test);
-//        ehr.setDepName(test);
-//        ehr.setContent(test);
-//
-//        testRegistration(test, test);
-//        testLogin(test, test);
-//        testAppoint(test);
-//        testConsult(test, test, ehr);
-//        String result = testProvStore(test);
-//        testAudit(test, result);
-//
-//        SqlSession session = null;
-//        try (InputStream is = Resources.getResourceAsStream("mybatis-config.xml")) {
-//            SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(is);
-//            session = factory.openSession();
-//            session.delete("clean.deleteCS");
-//            session.delete("clean.deleteH");
-//            session.delete("clean.deleteKS");
-//            session.delete("clean.deleteUser");
-//            session.delete("clean.deleteEhr");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (session != null) {
-//                session.commit();
-//                session.close();
-//                System.out.println("数据库清理成功");
-//            } else {
-//                System.out.println("数据库清理失败");
-//            }
-//        }
-//        System.out.println("PTime :" + PTime + "ms");
-//        System.out.println("DTime :" + DTime + "ms");
-//        System.out.println("HTime :" + HTime + "ms");
-//        System.out.println("KSTime:" + KSTime + "ms");
-//        System.out.println("CSTime:" + CSTime + "ms");
-//        System.out.println("ATime :" + ATime + "ms");
+        SqlSession session = null;
+        try (InputStream is = Resources.getResourceAsStream("mybatis-config.xml")) {
+            SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(is);
+            session = factory.openSession();
+            session.delete("clean.deleteCS");
+            session.delete("clean.deleteH");
+            session.delete("clean.deleteKS");
+            session.delete("clean.deleteUser");
+            session.delete("clean.deleteEhr");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.commit();
+                session.close();
+                System.out.println("数据库清理成功");
+            } else {
+                System.out.println("数据库清理失败");
+            }
+        }
+        System.out.println("PTime :" + PTime + "ms");
+        System.out.println("DTime :" + DTime + "ms");
+        System.out.println("HTime :" + HTime + "ms");
+        System.out.println("KSTime:" + KSTime + "ms");
+        System.out.println("CSTime:" + CSTime + "ms");
+        System.out.println("ATime :" + ATime + "ms");
         DeployUtil.cleanUpResourcesFile();
     }
 
@@ -179,6 +186,12 @@ public class TestAll {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        // add verification
+        dServiceImpl.callContract();
+        TransactionReceipt createTx = DeployUtil.Store(Integer.parseInt(idP), txContentStr);
+
+        System.out.println("createTx has received " + DeployUtil.getConfirmedNumber(createTx));
+
         long time11 = System.currentTimeMillis();
         dServiceImpl.sendBlockHash(idP, txContentStr);
         System.out.println("prov store succeeded");

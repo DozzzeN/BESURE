@@ -6,11 +6,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import pojo.DO.User;
 import service.DService;
+import service.Impl.SysParamServiceImpl;
+import service.SysParamService;
+import tetryon.*;
+import util.CryptoUtil;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.util.Base64;
+
+import static service.Impl.DServiceImpl.perD;
 
 @Controller
 public class ProvStoreController {
@@ -28,7 +35,8 @@ public class ProvStoreController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
+        // add verification
+        dServiceImpl.callContract();
         TransactionReceipt createTx = DeployUtil.Store(Integer.parseInt(idP), txContentStr);
 
         System.out.println("createTx has received " + DeployUtil.getConfirmedNumber(createTx));

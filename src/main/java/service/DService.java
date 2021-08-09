@@ -4,6 +4,9 @@ package service;
 import it.unisa.dia.gas.jpbc.Element;
 import pojo.VO.EHR;
 
+import java.math.BigInteger;
+import java.util.List;
+
 public interface DService {
     void sendTKPIDDToDoctor(Element tk, byte[] pid_d);
 
@@ -22,4 +25,6 @@ public interface DService {
     void sendBlockHash(String idP, String blockHash);
 
     EHR get_k_rou_y_rou(String idP, int stage, byte[] ck_rou_y_rou);
+
+    void callContract();
 }

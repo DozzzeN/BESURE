@@ -1,5 +1,6 @@
 package service.Impl;
 
+import contract.DeployUtil;
 import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
@@ -10,13 +11,16 @@ import pojo.VO.Provenance;
 import service.CSService;
 import service.DService;
 import service.HService;
+import tetryon.*;
 import util.ArraysUtil;
 import util.BytesUtil;
 import util.CryptoUtil;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import static service.Impl.SysParamServiceImpl.*;
 
@@ -93,6 +97,7 @@ public class DServiceImpl implements DService {
         perD = splitByte[0];
         sigma_perD = splitByte[1];
 
+        //P(P, sigma_perD)=P(H(perD), pkP)
         Element left = SysParamServiceImpl.pairing.pairing(
                 SysParamServiceImpl.pairing.getG1().newElementFromBytes(sigma_perD), SysParamServiceImpl.P);
 
@@ -203,6 +208,52 @@ public class DServiceImpl implements DService {
         } else {
             logger.warn("CS authentication failed!");
             return null;
+        }
+    }
+
+    @Override
+    public void callContract() {
+        //P(P, sigma_perD)=P(H(perD), pkP)
+        G1Point P = Pairing.P1();
+        G2Point g2 = new G2Point(
+                new Fp2(
+                        new BigInteger("10857046999023057135944570762232829481370756359578518086990519993285655852781"),
+                        new BigInteger("11559732032986387107991004021392285783925812861821192530917403151452391805634")
+                ),
+                new Fp2(
+                        new BigInteger("8495653923123431417604973247489272438418190587263600148770280649306958101930"),
+                        new BigInteger("4082367875863433681332203403145435568316851327593401208105741076214120093531")
+                )
+        );
+        try {
+            BigInteger perD_int = new BigInteger(1, CryptoUtil.getHash("SHA-256", perD));
+            G1Point perD_hash = G1.mul(P, perD_int);
+            G2Point sigma_perD = G2.ECTwistMul(g2, perD_int.multiply(new BigInteger(1, skP.toBytes())));
+            G2Point pkP = G2.ECTwistMul(g2, new BigInteger(1, skP.toBytes()));
+
+            List<BigInteger> params1 = new ArrayList<>();
+            params1.add(P.x.c0);
+            params1.add(P.y.c0);
+
+            List<BigInteger> params2 = new ArrayList<>();
+            params2.add(sigma_perD.x.b);
+            params2.add(sigma_perD.x.a);
+            params2.add(sigma_perD.y.b);
+            params2.add(sigma_perD.y.a);
+
+            List<BigInteger> params3 = new ArrayList<>();
+            params3.add(perD_hash.x.c0);
+            params3.add(perD_hash.y.c0);
+
+            List<BigInteger> params4 = new ArrayList<>();
+            params4.add(pkP.x.b);
+            params4.add(pkP.x.a);
+            params4.add(pkP.y.b);
+            params4.add(pkP.y.a);
+
+            DeployUtil.Verify(params1, params2, params3, params4);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -166,7 +166,7 @@ public class PServiceImpl implements PService {
             e.printStackTrace();
         }
 
-        //generate a permit to authenticate D
+        //generate a permit perD to authenticate D
         byte[] perD = ArraysUtil.mergeByte(idP.getBytes(), pidD, tpD.getBytes(), auxD.getBytes());
         Element perDHash = pairing.getG1().newElementFromHash(perD, 0, perD.length);
         Element sigma_perD = perDHash.mulZn(skP);
