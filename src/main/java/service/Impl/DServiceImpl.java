@@ -4,6 +4,7 @@ import contract.DeployUtil;
 import it.unisa.dia.gas.jpbc.Element;
 import mapper.ConsultMapper;
 import mapper.ProvStoreMapper;
+import org.aion.tetryon.*;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import pojo.VO.EHR;
@@ -11,7 +12,6 @@ import pojo.VO.Provenance;
 import service.CSService;
 import service.DService;
 import service.HService;
-import tetryon.*;
 import util.ArraysUtil;
 import util.BytesUtil;
 import util.CryptoUtil;
@@ -226,6 +226,7 @@ public class DServiceImpl implements DService {
                 )
         );
         try {
+            //115542125092635010786587944873596229844213200964329581726431900060269063838
             BigInteger perD_int = new BigInteger(1, CryptoUtil.getHash("SHA-256", perD));
             G1Point perD_hash = G1.mul(P, perD_int);
             G2Point sigma_perD = G2.ECTwistMul(g2, perD_int.multiply(new BigInteger(1, skP.toBytes())));

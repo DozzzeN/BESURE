@@ -3,7 +3,6 @@ package contract;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.*;
@@ -38,9 +37,9 @@ public class DeployUtil {
     public DeployUtil() {
         try {
             web3j = Web3j.build(new HttpService("http://localhost:7545"));  //本地的ganache gui
+            credentials = Credentials.create("4472aace87c90b577a230f8e6874afe026b21772d7671658fa60b4ed310d8927");  //ganache第一个用户私钥
 //            web3j = Web3j.build(new HttpService("https://ropsten.infura.io/v3/5e8867a88096409aa3373f4b4b15ed0b")); //ropsten测试链，地址来源于infura代理
 //            credentials = Credentials.create("6b1aad5ae46e7df34930d05a9bb856b93ec2a514ace6ac35018206fe3a3a3850");  //ropsten账户私钥，来源于metamask申请的账户和faucet
-            credentials = Credentials.create("4472aace87c90b577a230f8e6874afe026b21772d7671658fa60b4ed310d8927");  //ganache第一个用户私钥
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,7 +102,7 @@ public class DeployUtil {
     }
 
     public static void Verify(List<BigInteger> params1, List<BigInteger> params2,
-                       List<BigInteger> params3, List<BigInteger> params4) {
+                              List<BigInteger> params3, List<BigInteger> params4) {
         try {
             TransactionReceipt tr = (contract.verify(params1, params2, params3, params4)).send();
             System.out.println("contract verify:" + contract.getNotifyEvents(tr).get(0).note);

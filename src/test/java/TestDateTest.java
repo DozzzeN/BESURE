@@ -7,10 +7,6 @@ import static org.junit.Assert.assertThat;
 
 /**
  * TestDate Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>12ÔÂ 12, 2019</pre>
  */
 public class TestDateTest {
 

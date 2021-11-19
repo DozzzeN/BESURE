@@ -8,13 +8,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-/**
- * test.TestHash Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>12ÔÂ 11, 2019</pre>
- */
 public class TestHashTest {
     @Before
     public void before() throws Exception {
@@ -38,7 +31,7 @@ public class TestHashTest {
     @Test
     public void testFileHashValue() throws Exception {
         assertEquals("88a162ddcca3654ffc4d7700fd02b574", TestHash.bytesToHexString(Objects.requireNonNull(
-                TestHash.fileHashValue("D:\\java\\IdeaProjects\\BESURE\\BESURE.iml"))));
+                TestHash.fileHashValue("D:\\java\\BESURE\\BESURE.iml"))));
     }
 
 

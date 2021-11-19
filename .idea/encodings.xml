@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
-    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/lib" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/lib/web3j-4.5.5" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/sql/besure.sql" charset="GBK" />
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/controller/AppointController.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/main/java/controller/RegistrationController.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/main/java/mapper/AppointMapper.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/main/java/mapper/RegistrationMapper.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/main/java/pojo/DO/Doctor.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/web/WEB-INF/jsp/registration.jsp" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/main/web/resources/layui" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/test/java/TestDate.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/test/java/TestDateTest.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/test/java/TestHashTest.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/test/java/TestParamsTest.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/test/java/TestPathTest.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/test/java/TestDate.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/AllTests.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/ErrorHandlingTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/Fp2Test.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/G16SquarePreimageTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/G1Test.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/G2Test.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/JniTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/tetryon/PairingTest.java" charset="UTF-8" />
     <file url="PROJECT" charset="GBK" />
   </component>
 </project>

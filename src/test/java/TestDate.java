@@ -2,7 +2,7 @@ import java.text.SimpleDateFormat;
 
 public class TestDate {
     public static String Date() {
-        // 13Î»µÄÃë¼¶±ğµÄÊ±¼ä´Á
+        // 13ä½çš„ç§’çº§åˆ«çš„æ—¶é—´æˆ³
         long time2 = 1564145766895L;
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time2);
     }
